@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package govchain.datasets.v1;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+import "govchain/datasets/v1/entry.proto";
+import "govchain/datasets/v1/params.proto";
+
+option go_package = "govchain/x/datasets/types";
+
+// GenesisState defines the datasets module's genesis state.
+message GenesisState {
+  // params defines all the parameters of the module.
+  Params params = 1 [
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+  repeated Entry entry_list = 2 [(gogoproto.nullable) = false];
+  uint64 entry_count = 3;
+}

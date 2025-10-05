@@ -1,0 +1,109 @@
+syntax = "proto3";
+
+package govchain.datasets.v1;
+
+import "amino/amino.proto";
+import "cosmos/msg/v1/msg.proto";
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+import "govchain/datasets/v1/params.proto";
+
+option go_package = "govchain/x/datasets/types";
+
+// Msg defines the Msg service.
+service Msg {
+  option (cosmos.msg.v1.service) = true;
+
+  // UpdateParams defines a (governance) operation for updating the module
+  // parameters. The authority defaults to the x/gov module account.
+  rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
+
+  // CreateEntry defines the CreateEntry RPC.
+  rpc CreateEntry(MsgCreateEntry) returns (MsgCreateEntryResponse);
+
+  // UpdateEntry defines the UpdateEntry RPC.
+  rpc UpdateEntry(MsgUpdateEntry) returns (MsgUpdateEntryResponse);
+
+  // DeleteEntry defines the DeleteEntry RPC.
+  rpc DeleteEntry(MsgDeleteEntry) returns (MsgDeleteEntryResponse);
+}
+
+// MsgUpdateParams is the Msg/UpdateParams request type.
+message MsgUpdateParams {
+  option (cosmos.msg.v1.signer) = "authority";
+  option (amino.name) = "govchain/x/datasets/MsgUpdateParams";
+
+  // authority is the address that controls the module (defaults to x/gov unless overwritten).
+  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+  // params defines the module parameters to update.
+
+  // NOTE: All parameters must be supplied.
+  Params params = 2 [
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+}
+
+// MsgUpdateParamsResponse defines the response structure for executing a
+// MsgUpdateParams message.
+message MsgUpdateParamsResponse {}
+
+// MsgCreateEntry defines the MsgCreateEntry message.
+message MsgCreateEntry {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string title = 2;
+  string description = 3;
+  string ipfs_cid = 4;
+  string mime_type = 5;
+  string file_name = 6;
+  string file_url = 7;
+  string fallback_url = 8;
+  string file_size = 9;
+  string checksum_sha_256 = 10;
+  string agency = 11;
+  string category = 12;
+  string submitter = 13;
+  string timestamp = 14;
+  string pin_count = 15;
+}
+
+// MsgCreateEntryResponse defines the MsgCreateEntryResponse message.
+message MsgCreateEntryResponse {
+  uint64 id = 1;
+}
+
+// MsgUpdateEntry defines the MsgUpdateEntry message.
+message MsgUpdateEntry {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  uint64 id = 2;
+  string title = 3;
+  string description = 4;
+  string ipfs_cid = 5;
+  string mime_type = 6;
+  string file_name = 7;
+  string file_url = 8;
+  string fallback_url = 9;
+  string file_size = 10;
+  string checksum_sha_256 = 11;
+  string agency = 12;
+  string category = 13;
+  string submitter = 14;
+  string timestamp = 15;
+  string pin_count = 16;
+}
+
+// MsgUpdateEntryResponse defines the MsgUpdateEntryResponse message.
+message MsgUpdateEntryResponse {}
+
+// MsgDeleteEntry defines the MsgDeleteEntry message.
+message MsgDeleteEntry {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  uint64 id = 2;
+}
+
+// MsgDeleteEntryResponse defines the MsgDeleteEntryResponse message.
+message MsgDeleteEntryResponse {}

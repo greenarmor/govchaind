@@ -1,0 +1,102 @@
+syntax = "proto3";
+
+package govchain.datasets.v1;
+
+import "amino/amino.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "govchain/datasets/v1/entry.proto";
+import "govchain/datasets/v1/params.proto";
+
+option go_package = "govchain/x/datasets/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  // Parameters queries the parameters of the module.
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/govchain/datasets/v1/params";
+  }
+
+  // ListEntry Queries a list of Entry items.
+  rpc GetEntry(QueryGetEntryRequest) returns (QueryGetEntryResponse) {
+    option (google.api.http).get = "/govchain/datasets/v1/entry/{id}";
+  }
+
+  // ListEntry defines the ListEntry RPC.
+  rpc ListEntry(QueryAllEntryRequest) returns (QueryAllEntryResponse) {
+    option (google.api.http).get = "/govchain/datasets/v1/entry";
+  }
+
+  // EntriesByAgency Queries a list of EntriesByAgency items.
+  rpc EntriesByAgency(QueryEntriesByAgencyRequest) returns (QueryEntriesByAgencyResponse) {
+    option (google.api.http).get = "/govchain/datasets/v1/entries_by_agency/{agency}";
+  }
+
+  // EntriesByCategory Queries a list of EntriesByCategory items.
+  rpc EntriesByCategory(QueryEntriesByCategoryRequest) returns (QueryEntriesByCategoryResponse) {
+    option (google.api.http).get = "/govchain/datasets/v1/entries_by_category/{category}";
+  }
+
+  // EntriesByMimetype Queries a list of EntriesByMimetype items.
+  rpc EntriesByMimetype(QueryEntriesByMimetypeRequest) returns (QueryEntriesByMimetypeResponse) {
+    option (google.api.http).get = "/govchain/datasets/v1/entries_by_mimetype/{mime_type}";
+  }
+}
+
+// QueryParamsRequest is request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  // params holds all the parameters of this module.
+  Params params = 1 [
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+}
+
+// QueryGetEntryRequest defines the QueryGetEntryRequest message.
+message QueryGetEntryRequest {
+  uint64 id = 1;
+}
+
+// QueryGetEntryResponse defines the QueryGetEntryResponse message.
+message QueryGetEntryResponse {
+  Entry entry = 1 [(gogoproto.nullable) = false];
+}
+
+// QueryAllEntryRequest defines the QueryAllEntryRequest message.
+message QueryAllEntryRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+// QueryAllEntryResponse defines the QueryAllEntryResponse message.
+message QueryAllEntryResponse {
+  repeated Entry entry = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryEntriesByAgencyRequest defines the QueryEntriesByAgencyRequest message.
+message QueryEntriesByAgencyRequest {
+  string agency = 1;
+}
+
+// QueryEntriesByAgencyResponse defines the QueryEntriesByAgencyResponse message.
+message QueryEntriesByAgencyResponse {}
+
+// QueryEntriesByCategoryRequest defines the QueryEntriesByCategoryRequest message.
+message QueryEntriesByCategoryRequest {
+  string category = 1;
+}
+
+// QueryEntriesByCategoryResponse defines the QueryEntriesByCategoryResponse message.
+message QueryEntriesByCategoryResponse {}
+
+// QueryEntriesByMimetypeRequest defines the QueryEntriesByMimetypeRequest message.
+message QueryEntriesByMimetypeRequest {
+  string mime_type = 1;
+}
+
+// QueryEntriesByMimetypeResponse defines the QueryEntriesByMimetypeResponse message.
+message QueryEntriesByMimetypeResponse {}

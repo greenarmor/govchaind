@@ -1,0 +1,13 @@
+syntax = "proto3";
+package govchain.datasets.v1;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+
+option go_package = "govchain/x/datasets/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (amino.name) = "govchain/x/datasets/Params";
+  option (gogoproto.equal) = true;
+}
