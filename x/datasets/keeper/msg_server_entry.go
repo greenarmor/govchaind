@@ -4,11 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-
 	"govchain/x/datasets/types"
 
 	"cosmossdk.io/collections"
 	errorsmod "cosmossdk.io/errors"
+	"github.com/cometbft/cometbft/crypto/tmhash"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
@@ -17,10 +18,17 @@ func (k msgServer) CreateEntry(ctx context.Context, msg *types.MsgCreateEntry) (
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid address: %s", err))
 	}
 
+	// Get SDK context to access transaction information
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+
 	nextId, err := k.EntrySeq.Next(ctx)
 	if err != nil {
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "failed to get next id")
 	}
+
+	// Extract transaction hash
+	txBytes := sdkCtx.TxBytes()
+	txHash := fmt.Sprintf("%X", tmhash.Sum(txBytes))
 
 	var entry = types.Entry{
 		Id:              nextId,
@@ -39,6 +47,7 @@ func (k msgServer) CreateEntry(ctx context.Context, msg *types.MsgCreateEntry) (
 		Submitter:       msg.Submitter,
 		Timestamp:       msg.Timestamp,
 		PinCount:        msg.PinCount,
+		TxHash:          txHash,
 	}
 
 	if err = k.Entry.Set(

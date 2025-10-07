@@ -21,4 +21,5 @@ message Entry {
   string timestamp = 14;
   string pin_count = 15;
   string creator = 16;
+  string tx_hash = 17;
 }
