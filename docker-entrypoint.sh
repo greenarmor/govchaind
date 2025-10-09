@@ -41,7 +41,16 @@ if [ -n "$TS_IP" ]; then
   gosu nonroot sed -i "s/^external_address = \"\"/external_address = \"$TS_IP:26656\"/" "/home/nonroot/.govchain/config/config.toml"
   echo "config.toml updated with Tailscale IP."
 else
-  echo "Could not get Tailscale IP from sidecar. Proceeding without updating external_address."
+  echo "Could not get Tailscale IP. Attempting to discover public IP for VPS setup..."
+  PUBLIC_IP=$(curl -s api.ipify.org)
+
+  if [ -n "$PUBLIC_IP" ]; then
+    echo "Discovered public IP: $PUBLIC_IP. Updating config.toml..."
+    gosu nonroot sed -i "s/^external_address = \"\"/external_address = \"$PUBLIC_IP:26656\"/" "/home/nonroot/.govchain/config/config.toml"
+    echo "config.toml updated with public IP."
+  else
+    echo "Could not discover public IP. Proceeding without updating external_address."
+  fi
 fi
 
 # Add persistent peer to config.toml
