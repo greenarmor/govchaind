@@ -28,7 +28,15 @@ These instructions are for setting up a local development environment.
 - [Go](https://golang.org/doc/install) (version 1.18+)
 - [Ignite CLI](https://docs.ignite.com/guide/install)
 
-### Quick Setup
+### 1. Verify Your Environment
+
+Before you begin, run the environment check script to ensure you have all the necessary dependencies and compatible versions installed.
+
+```bash
+./scripts/check-build-env.sh
+```
+
+### 2. Quick Setup
 
 1.  **Set up the environment:**
     ```bash
