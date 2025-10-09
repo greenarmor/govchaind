@@ -9,7 +9,10 @@ services:
       - tailscale-ip-share:/var/run/tailscale-ip
     environment:
       - MONIKER=my-node
-      - CHAIN_ID=govchain-testnet
+      # Optional: Manually set the external IP address for the node.
+      # If not set, the entrypoint script will try to get it from Tailscale,
+      # or discover the public IP (e.g., for VPS deployments).
+      # - EXTERNAL_IP=YOUR_PUBLIC_IP_OR_DOMAIN
     ports:
       - "26656:26656"
       - "26657:26657"

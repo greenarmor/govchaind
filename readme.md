@@ -1,207 +1,96 @@
-# OpenGovChain Blockchain
+# OpenGovChain
 
-A tokenless, public good blockchain for government data transparency and accountability.
-
-## 🎯 Mission
-
-OpenGovChain is a decentralized blockchain network designed to store and manage government datasets with complete transparency. Our mission is to create an open, accessible platform where government data can be stored immutably and accessed by all citizens.
-
-## 🌟 Key Features
-
-### Tokenless Architecture
-- **No Economic Barriers**: Anyone can participate without purchasing tokens
-- **Volunteer-Operated**: Community-driven validator network
-- **Public Good Focus**: Designed for transparency, not profit
-
-### Government Data Management
-- **Immutable Records**: Government datasets stored permanently on blockchain
-- **IPFS Integration**: Efficient file storage with content addressing
-- **Rich Metadata**: Comprehensive dataset information and categorization
-- **Query Capabilities**: Search by agency, category, and file type
-
-### Decentralized Network
-- **Cosmos SDK**: Built on proven blockchain technology
-- **Validator Network**: Volunteer nodes secure the network
-- **Consensus Driven**: Community governance model
-- **Open Source**: Fully transparent and auditable code
-
-## 🏗️ Architecture
-
-### Blockchain Components
-- **Datasets Module**: Custom Cosmos SDK module for data management
-- **Entry Storage**: Structured metadata for government files
-- **Query Engine**: Efficient data retrieval and filtering
-- **Validator Network**: Decentralized consensus mechanism
-
-### Data Flow
-1. **Upload**: Government agencies upload datasets to IPFS
-2. **Metadata**: Blockchain stores immutable metadata and references
-3. **Validation**: Network validates data integrity and authenticity
-4. **Access**: Public can query and download datasets freely
-
-## 🚀 Getting Started
-
-### For Node Operators
-See [GETTING_STARTED.md](./GETTING_STARTED.md) for detailed setup instructions.
-
-### Quick Setup (Local development only)
-```bash
-# Setup blockchain environment
-./setup-env.sh
-
-# Build the chain binary
-ignite chain build
-
-# Start the blockchain
-ignite chain serve
-```
+**A tokenless, public good blockchain for government data transparency and accountability.**
 
 ---
 
-### For Volunteer Validators
-```bash
-# Join the network
-./join-as-volunteer.sh <node-name> <genesis-url>
+## 🎯 Mission
 
-# Start your validator node
-govchaind start
+OpenGovChain is a decentralized, permissionless, and tokenless blockchain network designed to store and manage government datasets with complete transparency. Our mission is to create an open, immutable, and accessible platform where government data is a public good, freely accessible to all citizens.
 
-# Configure your node
-nano ~/.govchain/config/config.toml
-```
+## 📚 Documentation
 
-### Configure Volunteer Node
+This README provides a general overview. For detailed guides, please refer to our full documentation:
 
-```toml
-# Persistent peers (seed nodes)
-persistent_peers = "node1@ip1:26656,node2@ip2:26656"
+- **[Getting Started](./documentation/GETTING_STARTED.md)**: A comprehensive guide to setting up your development environment and running a node.
+- **[Running with Docker](./documentation/DOCKER.md)**: General instructions for using Docker.
+- **[Standalone Node Guide](./documentation/RUNNING_WITHOUT_TAILSCALE.md)**: How to run a node without Tailscale, ideal for local development or VPS setups.
+- **[Tailscale Guide](./documentation/DOCKER_COMPOSE_TAILSCALE.md)**: How to join the network securely from behind a NAT using Tailscale.
+- **[Network Configuration](./documentation/NETWORK_CONFIG.md)**: Details on network settings, peers, and ports.
+- **[Technical Implementation](./documentation/TECHNICAL_IMPLEMENTATION.md)**: A deeper dive into the blockchain's architecture and custom modules.
 
-# External address (your public IP)
-external_address = "tcp://YOUR_PUBLIC_IP:26656"
+## 🚀 Getting Started (for Developers)
 
-# Prometheus metrics
-prometheus = true
-```
+These instructions are for setting up a local development environment.
 
-### Systemd Service
+### Prerequisites
 
-```bash
-sudo tee /etc/systemd/system/govchaind.service > /dev/null <<EOF
-[Unit]
-Description=OpenGovChain Node
-After=network-online.target
+- [Go](https://golang.org/doc/install) (version 1.18+)
+- [Ignite CLI](https://docs.ignite.com/guide/install)
 
-[Service]
-User=$USER
-ExecStart=$(which govchaind) start
-Restart=on-failure
-RestartSec=3
-LimitNOFILE=4096
+### 1. Verify Your Environment
 
-[Install]
-WantedBy=multi-user.target
-EOF
-
-# Enable and start service
-sudo systemctl daemon-reload
-sudo systemctl enable govchaind
-sudo systemctl start govchaind
-```
-
-
-### Verify Node is Running
+Before you begin, run the environment check script to ensure you have all the necessary dependencies and compatible versions installed.
 
 ```bash
-# Check status
-sudo systemctl status govchaind
-
-# View logs
-sudo journalctl -u govchaind -f
-
-# Check sync status
-govchaind status | jq .SyncInfo
+./scripts/check-build-env.sh
 ```
 
-## 📊 Network Statistics
+### 2. Quick Setup
 
-- **Consensus**: Tendermint BFT
-- **Block Time**: ~5 seconds
-- **Validators**: Community volunteers
-- **Storage**: IPFS for files, blockchain for metadata
-- **Governance**: Validator consensus + community input
+1.  **Set up the environment:**
+    ```bash
+    ./scripts/setup-env.sh
+    ```
 
-## 🛡️ Security
+2.  **Build the binary:**
+    ```bash
+    ignite chain build
+    ```
 
-### Data Integrity
-- **Cryptographic Hashing**: SHA-256 checksums for all files
-- **IPFS Content Addressing**: Immutable content identification
-- **Blockchain Immutability**: Tamper-proof metadata storage
+3.  **Start the local blockchain:**
+    ```bash
+    ignite chain serve
+    ```
 
-### Network Security
-- **Byzantine Fault Tolerance**: Tendermint consensus mechanism
-- **Validator Diversity**: Geographically distributed volunteer nodes
-- **Open Source Auditing**: Transparent codebase for security review
+## 🌐 Joining as a Volunteer Validator
 
-## 🌍 Public Impact
+Help secure the network by running a validator node. The entrypoint script now automatically detects your public IP on VPS environments or can be used with Tailscale for home connections.
 
-### Transparency Benefits
-- **Open Government**: All datasets publicly accessible
-- **Accountability**: Immutable record of government data
-- **Citizen Empowerment**: Direct access to government information
-- **Research Support**: Reliable data for academic and policy research
+### 1. Using Docker (Recommended)
 
-### Community Building
-- **Volunteer Network**: Engaged community of node operators
-- **Collaborative Governance**: Democratic decision-making process
-- **Educational Resources**: Learning opportunities in blockchain technology
-- **Global Model**: Template for transparent government worldwide
+Running a node with Docker is the easiest and most maintainable method.
 
-## 📈 Future Roadmap
+- For nodes on a VPS or with a public IP, see the **[Standalone Node Guide](./documentation/RUNNING_WITHOUT_TAILSCALE.md)**.
+- For nodes behind a firewall or on a home network, see the **[Tailscale Guide](./documentation/DOCKER_COMPOSE_TAILSCALE.md)**.
 
-### Phase 1: Foundation (Current)
-- ✅ Basic blockchain infrastructure
-- ✅ IPFS integration
-- ✅ Government dataset support
-- ✅ Volunteer validator network
+### 2. From Source
 
-### Phase 2: Enhancement
-- 🔄 Authentication
-- 🔄 DPoS support
-- 🔄 Advanced query capabilities
-- 🔄 Multi-agency coordination
-- 🔄 Data validation workflows
-- 🔄 Performance optimization
+For advanced users who prefer to build from source, follow the **[Getting Started](./documentation/GETTING_STARTED.md)** guide and then use the `join-as-volunteer.sh` script:
 
-### Phase 3: Expansion
-- 📋 Cross-chain interoperability
-- 📋 Enhanced governance features
-- 📋 International deployment
-- 📋 Advanced analytics
+```bash
+./scripts/join-as-volunteer.sh <your-node-name> <genesis-url>
+```
+
+## 🌟 Key Features
+
+- **Tokenless Architecture**: No economic barriers to participation. The network is a public good operated by volunteers.
+- **Immutable Government Data**: Datasets are stored permanently on the blockchain with IPFS integration for efficient file storage.
+- **Rich Metadata & Queries**: Datasets include comprehensive metadata, with capabilities to search by agency, category, and file type.
+- **Decentralized & Secure**: Built on the Cosmos SDK and secured by the Tendermint BFT consensus engine, operated by a distributed network of volunteer validators.
 
 ## 🤝 Contributing
 
-We welcome contributions from:
-- **Government Agencies**: Data providers and validators
-- **Node Operators**: Volunteer validators and infrastructure
-- **Developers**: Code contributors and reviewers
-- **Citizens**: Feedback and usage insights
+We welcome contributions from everyone! Whether you are a developer, a data provider, or a citizen advocate, you can help.
 
-### How to Contribute
-1. **Run a Node**: Join as a volunteer validator
-2. **Submit Data**: Help agencies upload datasets
-3. **Develop Features**: Contribute to the codebase
-4. **Spread Awareness**: Share the mission with others
-
-## 📞 Support
-
-- **Documentation**: See technical guides in this directory
-- **Community**: Join our validator network discussions
-- **Issues**: Report bugs and request features
-- **Training**: Volunteer node operator guides available
+1.  **Run a Node**: The most direct way to support the network.
+2.  **Contribute Code**: Help us build new features and fix bugs.
+3.  **Improve Documentation**: Clear documentation is crucial for adoption.
+4.  **Spread the Word**: Share our mission with others.
 
 ## 📜 License
 
-This project is open source and available under the MIT License. See LICENSE file for details.
+This project is open source and available under the [MIT License](./LICENSE).
 
 ---
 
