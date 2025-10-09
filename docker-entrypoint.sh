@@ -1,6 +1,8 @@
 #!/bin/sh
 set -e
 
+MONIKER=${MONIKER:-"GovChain Validator"}
+
 # Ensure the config directory exists
 mkdir -p "/home/nonroot/.govchain/config"
 chown nonroot:nonroot "/home/nonroot/.govchain/config"
@@ -9,7 +11,7 @@ chown nonroot:nonroot "/home/nonroot/.govchain/config"
 if [ ! -f "/home/nonroot/.govchain/config/genesis.json" ]; then
   # Initialize the node to create default config files (including a dummy genesis.json)
   # Use a temporary moniker and chain-id as they will be overwritten by the downloaded genesis
-  gosu nonroot env 'HOME=/home/nonroot' govchaind init "temp-moniker" --chain-id "temp-chain" --home "/home/nonroot/.govchain"
+  gosu nonroot env 'HOME=/home/nonroot' govchaind init "$MONIKER" --chain-id "temp-chain" --home "/home/nonroot/.govchain"
 
   # Download the actual genesis.json
   gosu nonroot env 'HOME=/home/nonroot' curl -sL "https://raw.githubusercontent.com/bettergovph/govchain/refs/heads/main/genesis.json" -o "/home/nonroot/.govchain/config/genesis.json"
