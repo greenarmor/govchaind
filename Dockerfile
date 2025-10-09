@@ -21,7 +21,7 @@ RUN CGO_ENABLED=0 go build -o /bin/govchaind ./cmd/govchaind
 FROM alpine:latest
 
 # Install ca-certificates
-RUN apk --no-cache add ca-certificates dos2unix curl gosu
+RUN apk --no-cache add ca-certificates dos2unix curl gosu jq
 
 # Create a non-root user
 RUN adduser -D -u 1001 nonroot
@@ -40,7 +40,7 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 EXPOSE 26656 26657
 
 HEALTHCHECK --interval=30s --timeout=10s --retries=5 \
-  CMD curl --fail http://localhost:26657/status || exit 1
+    CMD curl --fail http://localhost:26657/status || exit 1
 
 # Define a volume for the govchaind data
 VOLUME /home/nonroot/.govchain
