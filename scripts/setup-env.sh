@@ -11,7 +11,7 @@ echo "================================"
 echo ""
 
 # Check if blockchain is built
-if [ ! -f "./build/govchaind" ]; then
+if [ ! -f $(dirname "$0")/../build/govchaind ]; then
     echo "⚠️  Blockchain not built yet. Building now..."
     ignite chain build
 fi
@@ -51,8 +51,8 @@ echo ""
 echo "To start the blockchain:"
 echo "  ignite chain serve"
 echo ""
-echo "To start supporting services (run from original govchain directory):"
-echo "  cd /Users/jason/Sites/govchain && docker-compose up -d"
+echo "To start supporting services, run from the project root:
+  docker-compose up -d"
 echo ""
 echo "📋 Volunteer Node Operators:"
 echo "  - No tokens required to participate"

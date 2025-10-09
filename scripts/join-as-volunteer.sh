@@ -34,7 +34,7 @@ fi
 
 # Initialize node
 echo "🔧 Initializing volunteer node..."
-./build/govchaind init "$NODE_NAME" --chain-id govchain
+$(dirname "$0")/../build/govchaind "$NODE_NAME" --chain-id govchain
 
 # Download genesis file
 echo "📥 Downloading genesis file..."
