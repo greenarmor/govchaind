@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  govchaind:
+    image: govchaind:latest
+    container_name: govchaind-node
+    volumes:
+      - govchaind-data:/home/nonroot/.govchain
+      - tailscale-ip-share:/var/run/tailscale-ip
+    environment:
+      - MONIKER=my-node
+      - CHAIN_ID=govchain-testnet
+    ports:
+      - "26656:26656"
+      - "26657:26657"
+    networks:
+      - govchain_network
+    depends_on:
+      - tailscale
+
+  tailscale:
+    image: tailscale/tailscale
+    container_name: tailscale-sidecar
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    volumes:
+      - tailscale-state:/var/lib/tailscale
+      - tailscale-ip-share:/var/run/tailscale-ip
+    environment:
+      - TS_AUTHKEY=${TS_AUTHKEY}
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_HOSTNAME=my-node-ts
+    networks:
+      - govchain_network
+    command: sh -c "tailscaled --state=/var/lib/tailscale/tailscaled.state --socket=/var/run/tailscale/tailscaled.sock & tailscale up --authkey=$TS_AUTHKEY --hostname=$TS_HOSTNAME --accept-routes && tailscale ip -4 > /var/run/tailscale-ip/ts_ip && sleep infinity"
+
+networks:
+  govchain_network:
+    driver: bridge
+
+volumes:
+  govchaind-data:
+  tailscale-state:
+  tailscale-ip-share:

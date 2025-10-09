@@ -102,4 +102,29 @@ govulncheck:
 	@go tool golang.org/x/vuln/cmd/govulncheck@latest
 	@govulncheck ./...
 
-.PHONY: govet govulncheck
+#################
+###  Docker   ###
+#################
+
+docker-build:
+	@echo "--> Building Docker image..."
+	docker build -t govchaind:latest .
+
+docker-up: docker-build
+	@echo "--> Starting Docker Compose services..."
+	docker-compose up -d
+
+docker-down:
+	@echo "--> Stopping and removing Docker Compose services..."
+	docker-compose down
+
+docker-logs:
+	@echo "--> Displaying Docker Compose logs..."
+	docker-compose logs -f
+
+docker-clean: docker-down
+	@echo "--> Removing Docker volumes..."
+	docker volume rm govchaind_govchaind-data || true
+	docker volume rm govchaind_tailscale-state || true
+
+.PHONY: govet govulncheck docker-build docker-up docker-down docker-logs docker-clean
