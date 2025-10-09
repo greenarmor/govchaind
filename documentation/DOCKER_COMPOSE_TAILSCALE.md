@@ -59,6 +59,59 @@ For non-interactive Docker environments, it's best practice to use a reusable au
 
 The `docker-compose.yml` file orchestrates two services: `govchaind-node` (your blockchain node) and `tailscale` (a sidecar container for Tailscale connectivity).
 
+Here's the relevant `docker-compose.yml` snippet:
+
+```yaml
+version: '3.8'
+
+services:
+  govchaind:
+    image: govchaind:latest
+    container_name: govchaind-node
+    volumes:
+      - govchaind-data:/home/nonroot/.govchain
+      - tailscale-ip-share:/var/run/tailscale-ip
+    environment:
+      - MONIKER=my-node # Customize your node's name
+      # Optional: Manually set the external IP address for the node.
+      # If set, this will override the Tailscale-detected IP.
+      # - EXTERNAL_IP=YOUR_PUBLIC_IP_OR_DOMAIN
+    ports:
+      - "26656:26656"
+      - "26657:26657"
+    networks:
+      - govchain_network
+    depends_on:
+      - tailscale
+
+  tailscale:
+    image: tailscale/tailscale
+    container_name: tailscale-sidecar
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    volumes:
+      - tailscale-state:/var/lib/tailscale
+      - tailscale-ip-share:/var/run/tailscale-ip
+    environment:
+      - TS_AUTHKEY=${TS_AUTHKEY}
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_HOSTNAME=my-node-ts
+    networks:
+      - govchain_network
+    command: sh -c "tailscaled --state=/var/lib/tailscale/tailscaled.state --socket=/var/run/tailscale/tailscaled.sock & tailscale up --authkey=$TS_AUTHKEY --hostname=$TS_HOSTNAME --accept-routes && tailscale ip -4 > /var/run/tailscale-ip/ts_ip && sleep infinity"
+
+networks:
+  govchain_network:
+    driver: bridge
+
+volumes:
+  govchaind-data:
+  tailscale-state:
+  tailscale-ip-share:
+```
+
 ### 4.1. Build the Docker Image
 
 First, build the `govchaind` Docker image. This step compiles the `govchaind` binary and sets up the container environment.
@@ -107,14 +160,22 @@ If the `TS_AUTHKEY` you provided in your `.env` file is invalid, expired, or if 
 
 ### 4.4. Verify GovChain Node Configuration
 
-The `docker-entrypoint.sh` script for the `govchaind-node` is designed to dynamically fetch the Tailscale IP address from the `tailscale` sidecar and update the `govchaind`'s `config.toml` with this IP as its `external_address`. It also adds a persistent peer.
+The `docker-entrypoint.sh` script for the `govchaind-node` is designed to dynamically configure the node's network identity and chain ID:
 
-You can check the `govchaind-node` logs to confirm it's using the correct Tailscale IP and has added the persistent peer:
-```bash
-docker-compose logs govchaind-node
-```
-Look for log entries indicating the `external_address` being set and the persistent peer being added.
+### Moniker Configuration
 
+The node's moniker (name) is set via the `MONIKER` environment variable. If not explicitly provided at runtime (e.g., via `-e MONIKER=...`), it defaults to "GovChain Validator" as defined in the Docker image.
+
+### External IP Address Configuration
+
+1.  **Manual Override**: If the `EXTERNAL_IP` environment variable is set (e.g., `-e EXTERNAL_IP="YOUR_PUBLIC_IP_OR_DOMAIN"`), the script will use this value directly to configure `external_address` in `config.toml`. This can be useful if you need to advertise a specific IP that differs from the Tailscale IP.
+2.  **Tailscale Detection**: If `EXTERNAL_IP` is not set, the script checks for a Tailscale sidecar. If a Tailscale IP is found, it will be used as the `external_address`.
+3.  **Public IP Discovery**: If neither `EXTERNAL_IP` nor a Tailscale IP is detected, the script automatically attempts to discover the host machine's public IP address using an external service. If found, it configures `external_address` in `config.toml` with that IP (e.g., `external_address = "YOUR_PUBLIC_IP:26656"`).
+4.  **No Configuration**: If no IP can be determined through any of the above methods, the node will start without a pre-configured `external_address`.
+
+### Chain ID Configuration
+
+The `chain_id` for your node is now dynamically extracted from the `genesis.json` file that is downloaded during the node's initialization. This ensures that your node always uses the correct and authoritative `chain_id` for the network it is joining, removing any need for manual configuration of this value.
 ## 5. Persistent Tailscale State
 
 The `docker-compose.yml` configuration includes a named volume `tailscale-state` that is mounted to `/var/lib/tailscale` inside the `tailscale` container. This ensures that Tailscale's machine key and other state information are preserved. If you stop and restart your `tailscale` container (or even remove and recreate it, as long as the `tailscale-state` volume is not removed), it will retain its identity on your Tailscale network and should not require re-authentication.
