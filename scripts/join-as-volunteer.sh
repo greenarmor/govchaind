@@ -26,26 +26,36 @@ echo "📝 Node Name: $NODE_NAME"
 echo "🌐 Genesis URL: $GENESIS_URL"
 echo ""
 
-# Check if blockchain is built
-if [ ! -f "./build/govchaind" ]; then
-    echo "❌ Error: Blockchain not built. Please run: ignite chain build"
+# Locate govchaind binary
+if [ -f "./build/govchaind" ]; then
+    GOVCHAIND="./build/govchaind"
+elif command -v govchaind >/dev/null 2>&1; then
+    GOVCHAIND="$(command -v govchaind)"
+else
+    echo "❌ Error: govchaind binary not found."
+    echo "Please build or install it first, e.g.:"
+    echo "  ignite chain build"
+    echo "or ensure 'govchaind' is in your PATH."
     exit 1
 fi
 
+echo "⚙️ Using govchaind binary at: $GOVCHAIND"
+echo ""
+
 # Initialize node
 echo "🔧 Initializing volunteer node..."
-$(dirname "$0")/../build/govchaind "$NODE_NAME" --chain-id govchain
+"$GOVCHAIND" init "$NODE_NAME" --chain-id govchain
 
 # Download genesis file
 echo "📥 Downloading genesis file..."
-curl -s "$GENESIS_URL" > "$HOME/.govchain/config/genesis.json"
+curl -s "$GENESIS_URL" -o "$HOME/.govchain/config/genesis.json"
 
 # Create validator key
 echo "🔑 Creating validator key..."
-./build/govchaind keys add validator --keyring-backend test
+"$GOVCHAIND" keys add validator --keyring-backend test
 
 # Get validator address
-VALIDATOR_ADDR=$(./build/govchaind keys show validator -a --keyring-backend test)
+VALIDATOR_ADDR=$("$GOVCHAIND" keys show validator -a --keyring-backend test)
 
 echo ""
 echo "✅ Volunteer node setup complete!"
@@ -56,12 +66,12 @@ echo "  Name: $NODE_NAME"
 echo "  Validator Address: $VALIDATOR_ADDR"
 echo ""
 echo "🚀 To start your volunteer node:"
-echo "  ./build/govchaind start"
+echo "  $GOVCHAIND start"
 echo ""
 echo "🌐 To become a validator:"
-echo "  ./build/govchaind tx staking create-validator \\"
+echo "  $GOVCHAIND tx staking create-validator \\"
 echo "    --amount=1000000stake \\"
-echo "    --pubkey=\$(./build/govchaind tendermint show-validator) \\"
+echo "    --pubkey=\$($GOVCHAIND tendermint show-validator) \\"
 echo "    --moniker=\"$NODE_NAME\" \\"
 echo "    --chain-id=govchain \\"
 echo "    --from=validator \\"
