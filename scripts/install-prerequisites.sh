@@ -126,7 +126,6 @@ echo "🔧 Installing Ignite CLI..."
 if ! command -v ignite &> /dev/null; then
     if [ "$MACHINE" = "Linux" ]; then
         curl https://get.ignite.com/cli! | bash
-        sudo mv ignite /usr/local/bin/
     elif [ "$MACHINE" = "Mac" ]; then
         curl https://get.ignite.com/cli! | bash
         # Move to a location in PATH (no sudo needed on macOS)
