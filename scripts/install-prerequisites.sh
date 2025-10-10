@@ -53,7 +53,7 @@ fi
 echo "📦 Upgrading existing packages..."
 sudo apt upgrade -y
 
-Install basic dependencies
+#Install basic dependencies
 echo "📦 Installing basic dependencies..."
 sudo apt install -y wget git jq
 
