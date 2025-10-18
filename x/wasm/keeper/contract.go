@@ -13,7 +13,7 @@ func (k Keeper) RegisterContract(ctx context.Context, contract types.Contract) (
 		return types.Contract{}, err
 	}
 
-	contract.Id = id
+	contract.Id = id + 1
 	if err := contract.ValidateBasic(); err != nil {
 		return types.Contract{}, err
 	}

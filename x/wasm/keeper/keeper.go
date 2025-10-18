@@ -40,8 +40,8 @@ func NewKeeper(
 		cdc:          cdc,
 		addressCodec: addressCodec,
 		authority:    authority,
-		Params:       collections.NewItem(sb, types.ParamsKey, "params", codec.CollValue[types.Params](cdc)),
-		Contracts:    collections.NewMap(sb, types.ContractKey, "contract", collections.Uint64Key, codec.CollValue[types.Contract](cdc)),
+		Params:       collections.NewItem(sb, types.ParamsKey, "params", collections.NewJSONValueCodec[types.Params]()),
+		Contracts:    collections.NewMap(sb, types.ContractKey, "contract", collections.Uint64Key, collections.NewJSONValueCodec[types.Contract]()),
 		ContractSeq:  collections.NewSequence(sb, types.ContractCountKey, "contractSequence"),
 	}
 
