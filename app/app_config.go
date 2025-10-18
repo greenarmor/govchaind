@@ -1,6 +1,8 @@
 package app
 
 import (
+	_ "govchain/x/accountabilityscores/module"
+	accountabilitymoduletypes "govchain/x/accountabilityscores/types"
 	_ "govchain/x/datasets/module"
 	datasetsmoduletypes "govchain/x/datasets/types"
 	_ "govchain/x/wasm/module"
@@ -129,6 +131,7 @@ var (
 						// ibc modules
 						ibcexported.ModuleName,
 						// chain modules
+						accountabilitymoduletypes.ModuleName,
 						datasetsmoduletypes.ModuleName,
 						wasmmoduletypes.ModuleName,
 						// this line is used by starport scaffolding # stargate/app/beginBlockers
@@ -139,6 +142,7 @@ var (
 						feegrant.ModuleName,
 						group.ModuleName,
 						// chain modules
+						accountabilitymoduletypes.ModuleName,
 						datasetsmoduletypes.ModuleName,
 						wasmmoduletypes.ModuleName,
 						// this line is used by starport scaffolding # stargate/app/endBlockers
@@ -177,6 +181,7 @@ var (
 						ibctransfertypes.ModuleName,
 						icatypes.ModuleName,
 						// chain modules
+						accountabilitymoduletypes.ModuleName,
 						datasetsmoduletypes.ModuleName,
 						wasmmoduletypes.ModuleName,
 						// this line is used by starport scaffolding # stargate/app/initGenesis
@@ -274,6 +279,10 @@ var (
 			{
 				Name:   epochstypes.ModuleName,
 				Config: appconfig.WrapAny(&epochsmodulev1.Module{}),
+			},
+			{
+				Name:   accountabilitymoduletypes.ModuleName,
+				Config: appconfig.WrapAny(&accountabilitymoduletypes.Module{}),
 			},
 			{
 				Name:   datasetsmoduletypes.ModuleName,

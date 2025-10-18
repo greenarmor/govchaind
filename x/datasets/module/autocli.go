@@ -62,10 +62,15 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Skip:      true, // skipped because authority gated
 				},
 				{
-					RpcMethod:      "CreateEntry",
-					Use:            "create-entry [title] [description] [ipfs-cid] [mime-type] [file-name] [file-url] [fallback-url] [file-size] [checksum-sha-256] [agency] [category] [submitter] [timestamp] [pin-count]",
-					Short:          "Create entry",
-					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "title"}, {ProtoField: "description"}, {ProtoField: "ipfs_cid"}, {ProtoField: "mime_type"}, {ProtoField: "file_name"}, {ProtoField: "file_url"}, {ProtoField: "fallback_url"}, {ProtoField: "file_size"}, {ProtoField: "checksum_sha_256"}, {ProtoField: "agency"}, {ProtoField: "category"}, {ProtoField: "submitter"}, {ProtoField: "timestamp"}, {ProtoField: "pin_count"}},
+					RpcMethod: "CreateEntry",
+					Use:       "create-entry [title] [description] [ipfs-cid] [mime-type] [file-name] [file-url] [fallback-url] [file-size] [checksum-sha-256] [agency] [category] [submitter] [timestamp] [pin-count] [required-approvals] [liability-contract]",
+					Short:     "Create entry",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "title"}, {ProtoField: "description"}, {ProtoField: "ipfs_cid"}, {ProtoField: "mime_type"},
+						{ProtoField: "file_name"}, {ProtoField: "file_url"}, {ProtoField: "fallback_url"}, {ProtoField: "file_size"},
+						{ProtoField: "checksum_sha_256"}, {ProtoField: "agency"}, {ProtoField: "category"}, {ProtoField: "submitter"},
+						{ProtoField: "timestamp"}, {ProtoField: "pin_count"}, {ProtoField: "required_approvals"}, {ProtoField: "liability_contract"},
+					},
 				},
 				{
 					RpcMethod:      "UpdateEntry",
@@ -78,6 +83,12 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Use:            "delete-entry [id]",
 					Short:          "Delete entry",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "id"}},
+				},
+				{
+					RpcMethod:      "ApproveEntry",
+					Use:            "approve-entry [id] [evidence-uri] [liability-signature]",
+					Short:          "Approve a pending entry",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "id"}, {ProtoField: "evidence_uri"}, {ProtoField: "liability_signature"}},
 				},
 				// this line is used by ignite scaffolding # autocli/tx
 			},

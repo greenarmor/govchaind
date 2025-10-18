@@ -71,13 +71,17 @@ func (AppModule) RegisterServices(grpc.ServiceRegistrar) error {
 
 // DefaultGenesis returns a default GenesisState for the module, marshalled to json.RawMessage.
 func (am AppModule) DefaultGenesis(codec.JSONCodec) json.RawMessage {
-	return am.cdc.MustMarshalJSON(types.DefaultGenesis())
+	bz, err := json.Marshal(types.DefaultGenesis())
+	if err != nil {
+		panic(err)
+	}
+	return bz
 }
 
 // ValidateGenesis used to validate the GenesisState, given in its json.RawMessage form.
 func (am AppModule) ValidateGenesis(_ codec.JSONCodec, _ client.TxEncodingConfig, bz json.RawMessage) error {
 	var genState types.GenesisState
-	if err := am.cdc.UnmarshalJSON(bz, &genState); err != nil {
+	if err := json.Unmarshal(bz, &genState); err != nil {
 		return err
 	}
 
@@ -87,7 +91,7 @@ func (am AppModule) ValidateGenesis(_ codec.JSONCodec, _ client.TxEncodingConfig
 // InitGenesis performs the module's genesis initialization. It returns no validator updates.
 func (am AppModule) InitGenesis(ctx sdk.Context, _ codec.JSONCodec, gs json.RawMessage) {
 	var genState types.GenesisState
-	if err := am.cdc.UnmarshalJSON(gs, &genState); err != nil {
+	if err := json.Unmarshal(gs, &genState); err != nil {
 		panic(err)
 	}
 
@@ -103,7 +107,7 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, _ codec.JSONCodec) json.RawMe
 		panic(err)
 	}
 
-	bz, err := am.cdc.MarshalJSON(genState)
+	bz, err := json.Marshal(genState)
 	if err != nil {
 		panic(err)
 	}

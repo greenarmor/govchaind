@@ -22,6 +22,13 @@ func (gs GenesisState) Validate() error {
 			return fmt.Errorf("entry id should be lower or equal than the last id")
 		}
 		entryIdMap[elem.Id] = true
+
+		if elem.RequiredApprovals < gs.Params.MinRequiredApprovals {
+			return fmt.Errorf("entry %d requires %d approvals which is below the minimum %d", elem.Id, elem.RequiredApprovals, gs.Params.MinRequiredApprovals)
+		}
+		if err := elem.Validate(gs.Params); err != nil {
+			return fmt.Errorf("entry %d validation failed: %w", elem.Id, err)
+		}
 	}
 
 	return gs.Params.Validate()

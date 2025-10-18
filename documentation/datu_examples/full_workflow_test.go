@@ -85,14 +85,15 @@ func TestDATUModuleOperationsExample(t *testing.T) {
 	_ = mustBech32(addressCodec, wasmAuthorityRaw)
 
 	wasmKeeperInstance := wasmkeeper.NewKeeper(runtime.NewKVStoreService(keys[wasmtypes.StoreKey]), encCfg.Codec, addressCodec, wasmAuthorityRaw)
-	budgetKeeperInstance := budgetkeeper.NewKeeper(runtime.NewKVStoreService(keys[budgettypes.StoreKey]), encCfg.Codec, addressCodec)
+	accountabilityKeeperInstance := accountabilitykeeper.NewKeeper(runtime.NewKVStoreService(keys[accountabilitytypes.StoreKey]), encCfg.Codec, addressCodec)
+
+	budgetKeeperInstance := budgetkeeper.NewKeeper(runtime.NewKVStoreService(keys[budgettypes.StoreKey]), encCfg.Codec, addressCodec, accountabilityKeeperInstance)
 	budgetBridge := budgetKeeperBridge{keeper: &budgetKeeperInstance}
 
-	procurementKeeperInstance := procurementkeeper.NewKeeper(runtime.NewKVStoreService(keys[procurementtypes.StoreKey]), encCfg.Codec, addressCodec, budgetBridge)
+	procurementKeeperInstance := procurementkeeper.NewKeeper(runtime.NewKVStoreService(keys[procurementtypes.StoreKey]), encCfg.Codec, addressCodec, budgetBridge, accountabilityKeeperInstance)
 	procurementBridge := procurementKeeperBridge{keeper: &procurementKeeperInstance}
 
-	disbursementKeeperInstance := disbursementkeeper.NewKeeper(runtime.NewKVStoreService(keys[disbursementtypes.StoreKey]), encCfg.Codec, addressCodec, procurementBridge)
-	accountabilityKeeperInstance := accountabilitykeeper.NewKeeper(runtime.NewKVStoreService(keys[accountabilitytypes.StoreKey]), encCfg.Codec, addressCodec)
+	disbursementKeeperInstance := disbursementkeeper.NewKeeper(runtime.NewKVStoreService(keys[disbursementtypes.StoreKey]), encCfg.Codec, addressCodec, procurementBridge, accountabilityKeeperInstance)
 	governanceKeeperInstance := governancekeeper.NewKeeper(runtime.NewKVStoreService(keys[governancetypes.StoreKey]), encCfg.Codec, addressCodec)
 
 	contractAddress := mustBech32(addressCodec, deriveRawAddress("datu-contract-address"))
@@ -122,6 +123,75 @@ func TestDATUModuleOperationsExample(t *testing.T) {
 	require.Equal(t, []string{"DATU Treasury Coordinator"}, contractLabels)
 
 	budgetCreator := mustBech32(addressCodec, deriveRawAddress("datu-budget-owner"))
+	scoreMaintainer := mustBech32(addressCodec, deriveRawAddress("datu-score-maintainer"))
+
+	budgetAuditor := mustBech32(addressCodec, deriveRawAddress("datu-budget-auditor"))
+	budgetController := mustBech32(addressCodec, deriveRawAddress("datu-budget-controller"))
+	procurementOversight := mustBech32(addressCodec, deriveRawAddress("datu-procurement-oversight"))
+	procurementCitizen := mustBech32(addressCodec, deriveRawAddress("datu-procurement-citizen"))
+	disbursementController := mustBech32(addressCodec, deriveRawAddress("datu-disbursement-controller"))
+	disbursementAuditor := mustBech32(addressCodec, deriveRawAddress("datu-disbursement-auditor"))
+
+	budgetAuditorScore, err := accountabilityKeeperInstance.UpsertScorecard(ctx, accountabilitytypes.Scorecard{
+		Subject:     budgetAuditor,
+		Metric:      "budget_liability_attestation",
+		Score:       94,
+		Weight:      10,
+		EvidenceURI: fmt.Sprintf("wasm://%s/scorecards/budget-auditor", contract.Address),
+		UpdatedBy:   scoreMaintainer,
+	})
+	require.NoError(t, err)
+
+	budgetControllerScore, err := accountabilityKeeperInstance.UpsertScorecard(ctx, accountabilitytypes.Scorecard{
+		Subject:     budgetController,
+		Metric:      "budget_liability_attestation",
+		Score:       91,
+		Weight:      10,
+		EvidenceURI: fmt.Sprintf("wasm://%s/scorecards/budget-controller", contract.Address),
+		UpdatedBy:   scoreMaintainer,
+	})
+	require.NoError(t, err)
+
+	procurementOversightScore, err := accountabilityKeeperInstance.UpsertScorecard(ctx, accountabilitytypes.Scorecard{
+		Subject:     procurementOversight,
+		Metric:      "procurement_liability_attestation",
+		Score:       88,
+		Weight:      8,
+		EvidenceURI: fmt.Sprintf("wasm://%s/scorecards/procurement-oversight", contract.Address),
+		UpdatedBy:   scoreMaintainer,
+	})
+	require.NoError(t, err)
+
+	procurementCitizenScore, err := accountabilityKeeperInstance.UpsertScorecard(ctx, accountabilitytypes.Scorecard{
+		Subject:     procurementCitizen,
+		Metric:      "procurement_liability_attestation",
+		Score:       90,
+		Weight:      7,
+		EvidenceURI: fmt.Sprintf("wasm://%s/scorecards/procurement-citizen", contract.Address),
+		UpdatedBy:   scoreMaintainer,
+	})
+	require.NoError(t, err)
+
+	disbursementControllerScore, err := accountabilityKeeperInstance.UpsertScorecard(ctx, accountabilitytypes.Scorecard{
+		Subject:     disbursementController,
+		Metric:      "disbursement_liability_attestation",
+		Score:       93,
+		Weight:      9,
+		EvidenceURI: fmt.Sprintf("wasm://%s/scorecards/disbursement-controller", contract.Address),
+		UpdatedBy:   scoreMaintainer,
+	})
+	require.NoError(t, err)
+
+	disbursementAuditorScore, err := accountabilityKeeperInstance.UpsertScorecard(ctx, accountabilitytypes.Scorecard{
+		Subject:     disbursementAuditor,
+		Metric:      "disbursement_liability_attestation",
+		Score:       95,
+		Weight:      9,
+		EvidenceURI: fmt.Sprintf("wasm://%s/scorecards/disbursement-auditor", contract.Address),
+		UpdatedBy:   scoreMaintainer,
+	})
+	require.NoError(t, err)
+
 	budget, err := budgetKeeperInstance.RegisterBudget(ctx, budgettypes.Budget{
 		Agency:      "Department of Budget and Management",
 		FiscalYear:  "2025",
@@ -134,6 +204,23 @@ func TestDATUModuleOperationsExample(t *testing.T) {
 	require.NoError(t, err)
 	require.NotZero(t, budget.Id)
 	require.Equal(t, budgettypes.BudgetStatusDraft, budget.Status)
+
+	budgetContractURI := fmt.Sprintf("wasm://%s/contracts/budget-liability", contract.Address)
+	budget, err = budgetKeeperInstance.RecordBudgetApproval(ctx, budget.Id, budgetContractURI, accountabilitytypes.Approval{
+		Signer:       budgetAuditor,
+		Role:         "Commission on Audit",
+		ScorecardId:  budgetAuditorScore.Id,
+		SignatureURI: fmt.Sprintf("wasm://%s/signatures/%s", contract.Address, budgetAuditor),
+	})
+	require.NoError(t, err)
+
+	budget, err = budgetKeeperInstance.RecordBudgetApproval(ctx, budget.Id, "", accountabilitytypes.Approval{
+		Signer:       budgetController,
+		Role:         "Department Controller",
+		ScorecardId:  budgetControllerScore.Id,
+		SignatureURI: fmt.Sprintf("wasm://%s/signatures/%s", contract.Address, budgetController),
+	})
+	require.NoError(t, err)
 
 	budget, err = budgetKeeperInstance.UpdateBudgetStatus(ctx, budget.Id, budgettypes.BudgetStatusLegislated)
 	require.NoError(t, err)
@@ -176,6 +263,27 @@ func TestDATUModuleOperationsExample(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, procurementtypes.ProcurementStatusTendering, procurement.Status)
 
+	procurementContractURI := fmt.Sprintf("wasm://%s/contracts/procurement-liability", contract.Address)
+	procurement, err = procurementKeeperInstance.RecordProcurementApproval(ctx, procurement.Id, procurementContractURI, accountabilitytypes.Approval{
+		Signer:       procurementOversight,
+		Role:         "Procurement Oversight",
+		ScorecardId:  procurementOversightScore.Id,
+		SignatureURI: fmt.Sprintf("wasm://%s/signatures/%s", contract.Address, procurementOversight),
+	})
+	require.NoError(t, err)
+
+	procurement, err = procurementKeeperInstance.RecordProcurementApproval(ctx, procurement.Id, "", accountabilitytypes.Approval{
+		Signer:       procurementCitizen,
+		Role:         "Citizen Observer",
+		ScorecardId:  procurementCitizenScore.Id,
+		SignatureURI: fmt.Sprintf("wasm://%s/signatures/%s", contract.Address, procurementCitizen),
+	})
+	require.NoError(t, err)
+
+	procurement, err = procurementKeeperInstance.UpdateProcurementStatus(ctx, procurement.Id, procurementtypes.ProcurementStatusAwarded)
+	require.NoError(t, err)
+	require.Equal(t, procurementtypes.ProcurementStatusAwarded, procurement.Status)
+
 	fetchedProcurement, err := procurementKeeperInstance.GetProcurement(ctx, procurement.Id)
 	require.NoError(t, err)
 	require.Equal(t, "Open Transparency Platform", fetchedProcurement.Title)
@@ -201,9 +309,30 @@ func TestDATUModuleOperationsExample(t *testing.T) {
 	require.NotZero(t, disbursement.Id)
 	require.Equal(t, disbursementtypes.DisbursementStatusScheduled, disbursement.Status)
 
+	disbursementContractURI := fmt.Sprintf("wasm://%s/contracts/disbursement-liability", contract.Address)
+	disbursement, err = disbursementKeeperInstance.RecordDisbursementApproval(ctx, disbursement.Id, disbursementContractURI, accountabilitytypes.Approval{
+		Signer:       disbursementController,
+		Role:         "Disbursement Controller",
+		ScorecardId:  disbursementControllerScore.Id,
+		SignatureURI: fmt.Sprintf("wasm://%s/signatures/%s", contract.Address, disbursementController),
+	})
+	require.NoError(t, err)
+
+	disbursement, err = disbursementKeeperInstance.RecordDisbursementApproval(ctx, disbursement.Id, "", accountabilitytypes.Approval{
+		Signer:       disbursementAuditor,
+		Role:         "External Auditor",
+		ScorecardId:  disbursementAuditorScore.Id,
+		SignatureURI: fmt.Sprintf("wasm://%s/signatures/%s", contract.Address, disbursementAuditor),
+	})
+	require.NoError(t, err)
+
 	disbursement, err = disbursementKeeperInstance.UpdateDisbursementStatus(ctx, disbursement.Id, disbursementtypes.DisbursementStatusReleased)
 	require.NoError(t, err)
 	require.Equal(t, disbursementtypes.DisbursementStatusReleased, disbursement.Status)
+
+	disbursement, err = disbursementKeeperInstance.UpdateDisbursementStatus(ctx, disbursement.Id, disbursementtypes.DisbursementStatusVerified)
+	require.NoError(t, err)
+	require.Equal(t, disbursementtypes.DisbursementStatusVerified, disbursement.Status)
 
 	fetchedDisbursement, err := disbursementKeeperInstance.GetDisbursement(ctx, disbursement.Id)
 	require.NoError(t, err)
@@ -259,7 +388,15 @@ func TestDATUModuleOperationsExample(t *testing.T) {
 		return false, nil
 	})
 	require.NoError(t, err)
-	require.Equal(t, []uint64{scorecard.Id}, scorecardIDs)
+	require.Equal(t, []uint64{
+		budgetAuditorScore.Id,
+		budgetControllerScore.Id,
+		procurementOversightScore.Id,
+		procurementCitizenScore.Id,
+		disbursementControllerScore.Id,
+		disbursementAuditorScore.Id,
+		scorecard.Id,
+	}, scorecardIDs)
 
 	delegator := mustBech32(addressCodec, deriveRawAddress("datu-delegator"))
 	delegatee := mustBech32(addressCodec, deriveRawAddress("datu-delegatee"))

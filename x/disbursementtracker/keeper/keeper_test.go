@@ -2,6 +2,7 @@ package keeper_test
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	address "cosmossdk.io/core/address"
@@ -12,6 +13,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	moduletestutil "github.com/cosmos/cosmos-sdk/types/module/testutil"
 
+	accountabilitykeeper "govchain/x/accountabilityscores/keeper"
+	accountabilitytypes "govchain/x/accountabilityscores/types"
 	"govchain/x/disbursementtracker/keeper"
 	"govchain/x/disbursementtracker/types"
 	procurementtypes "govchain/x/procurementledger/types"
@@ -29,10 +32,11 @@ func (p procurementKeeperStub) GetProcurement(ctx context.Context, id uint64) (p
 }
 
 type fixture struct {
-	ctx          context.Context
-	keeper       keeper.Keeper
-	addressCodec address.Codec
-	procurements *procurementKeeperStub
+	ctx            context.Context
+	keeper         keeper.Keeper
+	addressCodec   address.Codec
+	procurements   *procurementKeeperStub
+	accountability *accountabilitykeeper.Keeper
 }
 
 func initFixture(t *testing.T) *fixture {
@@ -40,18 +44,24 @@ func initFixture(t *testing.T) *fixture {
 
 	encCfg := moduletestutil.MakeTestEncodingConfig()
 	addressCodec := addresscodec.NewBech32Codec(sdk.GetConfig().GetBech32AccountAddrPrefix())
-	storeKey := storetypes.NewKVStoreKey(types.StoreKey)
-	storeService := runtime.NewKVStoreService(storeKey)
-	ctx := testutil.DefaultContextWithDB(t, storeKey, storetypes.NewTransientStoreKey("transient_disbursement")).Ctx
+	keys := map[string]*storetypes.KVStoreKey{
+		accountabilitytypes.StoreKey: storetypes.NewKVStoreKey(accountabilitytypes.StoreKey),
+		types.StoreKey:               storetypes.NewKVStoreKey(types.StoreKey),
+	}
+	ctx := testutil.DefaultContextWithKeys(keys, nil, nil)
+	storeService := runtime.NewKVStoreService(keys[types.StoreKey])
+	accountabilityStore := runtime.NewKVStoreService(keys[accountabilitytypes.StoreKey])
 
+	accountabilityKeeper := accountabilitykeeper.NewKeeper(accountabilityStore, encCfg.Codec, addressCodec)
 	procurements := &procurementKeeperStub{procurements: map[uint64]procurementtypes.Procurement{}}
-	k := keeper.NewKeeper(storeService, encCfg.Codec, addressCodec, procurements)
+	k := keeper.NewKeeper(storeService, encCfg.Codec, addressCodec, procurements, accountabilityKeeper)
 
 	return &fixture{
-		ctx:          ctx,
-		keeper:       k,
-		addressCodec: addressCodec,
-		procurements: procurements,
+		ctx:            ctx,
+		keeper:         k,
+		addressCodec:   addressCodec,
+		procurements:   procurements,
+		accountability: &accountabilityKeeper,
 	}
 }
 
@@ -146,12 +156,61 @@ func TestUpdateDisbursementStatus(t *testing.T) {
 		t.Fatalf("register disbursement: %v", err)
 	}
 
+	maintainer := f.newPerformer(t, "scoreMaintainerAddr_______")
+	controller := f.newPerformer(t, "controllerAddr____________")
+	auditor := f.newPerformer(t, "auditorAddr_______________")
+
+	controllerScore, err := f.accountability.UpsertScorecard(f.ctx, accountabilitytypes.Scorecard{
+		Subject:     controller,
+		Metric:      "disbursement_liability_test",
+		Score:       92,
+		Weight:      9,
+		EvidenceURI: "ipfs://controller",
+		UpdatedBy:   maintainer,
+	})
+	if err != nil {
+		t.Fatalf("upsert controller score: %v", err)
+	}
+
+	auditorScore, err := f.accountability.UpsertScorecard(f.ctx, accountabilitytypes.Scorecard{
+		Subject:     auditor,
+		Metric:      "disbursement_liability_test",
+		Score:       94,
+		Weight:      9,
+		EvidenceURI: "ipfs://auditor",
+		UpdatedBy:   maintainer,
+	})
+	if err != nil {
+		t.Fatalf("upsert auditor score: %v", err)
+	}
+
+	if _, err := f.keeper.RecordDisbursementApproval(f.ctx, disbursement.Id, "ipfs://contract/disbursement", accountabilitytypes.Approval{
+		Signer:       controller,
+		Role:         "Controller",
+		ScorecardId:  controllerScore.Id,
+		SignatureURI: fmt.Sprintf("ipfs://signatures/%s", controller),
+	}); err != nil {
+		t.Fatalf("record controller approval: %v", err)
+	}
+	if _, err := f.keeper.RecordDisbursementApproval(f.ctx, disbursement.Id, "", accountabilitytypes.Approval{
+		Signer:       auditor,
+		Role:         "Auditor",
+		ScorecardId:  auditorScore.Id,
+		SignatureURI: fmt.Sprintf("ipfs://signatures/%s", auditor),
+	}); err != nil {
+		t.Fatalf("record auditor approval: %v", err)
+	}
+
 	updated, err := f.keeper.UpdateDisbursementStatus(f.ctx, disbursement.Id, types.DisbursementStatusReleased)
 	if err != nil {
 		t.Fatalf("update status: %v", err)
 	}
 	if updated.Status != types.DisbursementStatusReleased {
 		t.Fatalf("unexpected status %s", updated.Status)
+	}
+
+	if _, err := f.keeper.UpdateDisbursementStatus(f.ctx, disbursement.Id, types.DisbursementStatusVerified); err != nil {
+		t.Fatalf("update to verified: %v", err)
 	}
 
 	if _, err := f.keeper.UpdateDisbursementStatus(f.ctx, disbursement.Id, types.DisbursementStatusScheduled); err == nil {

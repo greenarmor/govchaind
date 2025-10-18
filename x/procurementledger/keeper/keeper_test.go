@@ -2,6 +2,7 @@ package keeper_test
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	address "cosmossdk.io/core/address"
@@ -12,6 +13,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	moduletestutil "github.com/cosmos/cosmos-sdk/types/module/testutil"
 
+	accountabilitykeeper "govchain/x/accountabilityscores/keeper"
+	accountabilitytypes "govchain/x/accountabilityscores/types"
 	budgettypes "govchain/x/budgetregistry/types"
 	"govchain/x/procurementledger/keeper"
 	"govchain/x/procurementledger/types"
@@ -29,10 +32,11 @@ func (b budgetKeeperStub) GetBudget(ctx context.Context, id uint64) (budgettypes
 }
 
 type fixture struct {
-	ctx          context.Context
-	keeper       keeper.Keeper
-	addressCodec address.Codec
-	budgets      *budgetKeeperStub
+	ctx            context.Context
+	keeper         keeper.Keeper
+	addressCodec   address.Codec
+	budgets        *budgetKeeperStub
+	accountability *accountabilitykeeper.Keeper
 }
 
 func initFixture(t *testing.T) *fixture {
@@ -40,18 +44,24 @@ func initFixture(t *testing.T) *fixture {
 
 	encCfg := moduletestutil.MakeTestEncodingConfig()
 	addressCodec := addresscodec.NewBech32Codec(sdk.GetConfig().GetBech32AccountAddrPrefix())
-	storeKey := storetypes.NewKVStoreKey(types.StoreKey)
-	storeService := runtime.NewKVStoreService(storeKey)
-	ctx := testutil.DefaultContextWithDB(t, storeKey, storetypes.NewTransientStoreKey("transient_procurement")).Ctx
+	keys := map[string]*storetypes.KVStoreKey{
+		accountabilitytypes.StoreKey: storetypes.NewKVStoreKey(accountabilitytypes.StoreKey),
+		types.StoreKey:               storetypes.NewKVStoreKey(types.StoreKey),
+	}
+	ctx := testutil.DefaultContextWithKeys(keys, nil, nil)
+	storeService := runtime.NewKVStoreService(keys[types.StoreKey])
+	accountabilityStore := runtime.NewKVStoreService(keys[accountabilitytypes.StoreKey])
 
+	accountabilityKeeper := accountabilitykeeper.NewKeeper(accountabilityStore, encCfg.Codec, addressCodec)
 	budgets := &budgetKeeperStub{budgets: map[uint64]budgettypes.Budget{}}
-	k := keeper.NewKeeper(storeService, encCfg.Codec, addressCodec, budgets)
+	k := keeper.NewKeeper(storeService, encCfg.Codec, addressCodec, budgets, accountabilityKeeper)
 
 	return &fixture{
-		ctx:          ctx,
-		keeper:       k,
-		addressCodec: addressCodec,
-		budgets:      budgets,
+		ctx:            ctx,
+		keeper:         k,
+		addressCodec:   addressCodec,
+		budgets:        budgets,
+		accountability: &accountabilityKeeper,
 	}
 }
 
@@ -145,12 +155,61 @@ func TestUpdateProcurementStatus(t *testing.T) {
 		t.Fatalf("register procurement: %v", err)
 	}
 
+	maintainer := f.newOfficer(t, "scoreMaintainerAddr_______")
+	oversight := f.newOfficer(t, "oversightAddr______________")
+	citizen := f.newOfficer(t, "citizenAddr_______________")
+
+	oversightScore, err := f.accountability.UpsertScorecard(f.ctx, accountabilitytypes.Scorecard{
+		Subject:     oversight,
+		Metric:      "procurement_liability_test",
+		Score:       86,
+		Weight:      8,
+		EvidenceURI: "ipfs://oversight",
+		UpdatedBy:   maintainer,
+	})
+	if err != nil {
+		t.Fatalf("upsert oversight score: %v", err)
+	}
+
+	citizenScore, err := f.accountability.UpsertScorecard(f.ctx, accountabilitytypes.Scorecard{
+		Subject:     citizen,
+		Metric:      "procurement_liability_test",
+		Score:       90,
+		Weight:      7,
+		EvidenceURI: "ipfs://citizen",
+		UpdatedBy:   maintainer,
+	})
+	if err != nil {
+		t.Fatalf("upsert citizen score: %v", err)
+	}
+
+	if _, err := f.keeper.RecordProcurementApproval(f.ctx, procurement.Id, "ipfs://contract/procurement", accountabilitytypes.Approval{
+		Signer:       oversight,
+		Role:         "Oversight",
+		ScorecardId:  oversightScore.Id,
+		SignatureURI: fmt.Sprintf("ipfs://signatures/%s", oversight),
+	}); err != nil {
+		t.Fatalf("record oversight approval: %v", err)
+	}
+	if _, err := f.keeper.RecordProcurementApproval(f.ctx, procurement.Id, "", accountabilitytypes.Approval{
+		Signer:       citizen,
+		Role:         "Citizen",
+		ScorecardId:  citizenScore.Id,
+		SignatureURI: fmt.Sprintf("ipfs://signatures/%s", citizen),
+	}); err != nil {
+		t.Fatalf("record citizen approval: %v", err)
+	}
+
 	updated, err := f.keeper.UpdateProcurementStatus(f.ctx, procurement.Id, types.ProcurementStatusTendering)
 	if err != nil {
 		t.Fatalf("update status: %v", err)
 	}
 	if updated.Status != types.ProcurementStatusTendering {
 		t.Fatalf("unexpected status %s", updated.Status)
+	}
+
+	if _, err := f.keeper.UpdateProcurementStatus(f.ctx, procurement.Id, types.ProcurementStatusAwarded); err != nil {
+		t.Fatalf("update to awarded: %v", err)
 	}
 
 	if _, err := f.keeper.UpdateProcurementStatus(f.ctx, procurement.Id, types.ProcurementStatusPlanning); err == nil {

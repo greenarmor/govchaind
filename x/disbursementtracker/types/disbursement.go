@@ -5,6 +5,8 @@ import (
 	"strings"
 
 	sdkmath "cosmossdk.io/math"
+
+	accountabilitytypes "govchain/x/accountabilityscores/types"
 )
 
 // DisbursementStatus tracks the reconciliation lifecycle of a disbursement.
@@ -28,14 +30,16 @@ var disbursementTransitions = map[DisbursementStatus][]DisbursementStatus{
 
 // Disbursement records a release of funds tied to a procurement.
 type Disbursement struct {
-	Id            uint64             `json:"id" yaml:"id"`
-	ProcurementId uint64             `json:"procurement_id" yaml:"procurement_id"`
-	Amount        sdkmath.Int        `json:"amount" yaml:"amount"`
-	Currency      string             `json:"currency" yaml:"currency"`
-	Status        DisbursementStatus `json:"status" yaml:"status"`
-	EvidenceURI   string             `json:"evidence_uri" yaml:"evidence_uri"`
-	Notes         string             `json:"notes" yaml:"notes"`
-	PerformedBy   string             `json:"performed_by" yaml:"performed_by"`
+	Id                   uint64                         `json:"id" yaml:"id"`
+	ProcurementId        uint64                         `json:"procurement_id" yaml:"procurement_id"`
+	Amount               sdkmath.Int                    `json:"amount" yaml:"amount"`
+	Currency             string                         `json:"currency" yaml:"currency"`
+	Status               DisbursementStatus             `json:"status" yaml:"status"`
+	EvidenceURI          string                         `json:"evidence_uri" yaml:"evidence_uri"`
+	Notes                string                         `json:"notes" yaml:"notes"`
+	PerformedBy          string                         `json:"performed_by" yaml:"performed_by"`
+	LiabilityContractURI string                         `json:"liability_contract_uri" yaml:"liability_contract_uri"`
+	Approvals            []accountabilitytypes.Approval `json:"approvals" yaml:"approvals"`
 }
 
 // ValidateBasic ensures the disbursement entry is consistent.
@@ -57,6 +61,14 @@ func (d Disbursement) ValidateBasic() error {
 	}
 	if _, ok := disbursementTransitions[d.Status]; !ok {
 		return fmt.Errorf("unknown disbursement status: %s", d.Status)
+	}
+	if strings.TrimSpace(d.LiabilityContractURI) == "" && d.Status != DisbursementStatusScheduled {
+		return fmt.Errorf("liability contract uri required once disbursement leaves scheduled")
+	}
+	for _, approval := range d.Approvals {
+		if err := approval.ValidateBasic(); err != nil {
+			return err
+		}
 	}
 	return nil
 }

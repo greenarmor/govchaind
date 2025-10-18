@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	"fmt"
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -18,10 +19,15 @@ func TestEntryMsgServerCreate(t *testing.T) {
 	require.NoError(t, err)
 
 	for i := 0; i < 5; i++ {
-		resp, err := srv.CreateEntry(f.ctx, &types.MsgCreateEntry{Creator: creator})
-		require.NoError(t, err)
-		require.Equal(t, i, int(resp.Id))
-	}
+                resp, err := srv.CreateEntry(f.ctx, &types.MsgCreateEntry{
+                        Creator:           creator,
+                        Title:             fmt.Sprintf("dataset-%d", i),
+                        LiabilityContract: "ipfs://contract",
+                        RequiredApprovals: 2,
+                })
+                require.NoError(t, err)
+                require.Equal(t, i, int(resp.Id))
+        }
 }
 
 func TestEntryMsgServerUpdate(t *testing.T) {
@@ -34,7 +40,11 @@ func TestEntryMsgServerUpdate(t *testing.T) {
 	unauthorizedAddr, err := f.addressCodec.BytesToString([]byte("unauthorizedAddr___________"))
 	require.NoError(t, err)
 
-	_, err = srv.CreateEntry(f.ctx, &types.MsgCreateEntry{Creator: creator})
+	_, err = srv.CreateEntry(f.ctx, &types.MsgCreateEntry{
+		Creator:           creator,
+		LiabilityContract: "ipfs://contract",
+		RequiredApprovals: 2,
+	})
 	require.NoError(t, err)
 
 	tests := []struct {
@@ -84,7 +94,11 @@ func TestEntryMsgServerDelete(t *testing.T) {
 	unauthorizedAddr, err := f.addressCodec.BytesToString([]byte("unauthorizedAddr___________"))
 	require.NoError(t, err)
 
-	_, err = srv.CreateEntry(f.ctx, &types.MsgCreateEntry{Creator: creator})
+	_, err = srv.CreateEntry(f.ctx, &types.MsgCreateEntry{
+		Creator:           creator,
+		LiabilityContract: "ipfs://contract",
+		RequiredApprovals: 2,
+	})
 	require.NoError(t, err)
 
 	tests := []struct {
@@ -122,4 +136,64 @@ func TestEntryMsgServerDelete(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestEntryMsgServerApprove(t *testing.T) {
+	f := initFixture(t)
+	srv := keeper.NewMsgServerImpl(f.keeper)
+
+	creator, err := f.addressCodec.BytesToString([]byte("signerAddr__________________"))
+	require.NoError(t, err)
+
+	approverA, err := f.addressCodec.BytesToString([]byte("approverAddrA_______________"))
+	require.NoError(t, err)
+	approverB, err := f.addressCodec.BytesToString([]byte("approverAddrB_______________"))
+	require.NoError(t, err)
+
+	params, err := f.keeper.Params.Get(f.ctx)
+	require.NoError(t, err)
+	f.setScorecard(t, approverA, params.ApprovalMetric, params.MinAccountabilityScore)
+	f.setScorecard(t, approverB, params.ApprovalMetric, params.MinAccountabilityScore+5)
+
+	createResp, err := srv.CreateEntry(f.ctx, &types.MsgCreateEntry{
+		Creator:           creator,
+		Title:             "critical-dataset",
+		LiabilityContract: "ipfs://contract",
+		RequiredApprovals: params.MinRequiredApprovals,
+	})
+	require.NoError(t, err)
+
+	_, err = srv.ApproveEntry(f.ctx, &types.MsgApproveEntry{
+		Approver:           approverA,
+		Id:                 createResp.Id,
+		EvidenceUri:        "ipfs://evidence-a",
+		LiabilitySignature: "sig-a",
+	})
+	require.NoError(t, err)
+
+	entry, err := f.keeper.Entry.Get(f.ctx, createResp.Id)
+	require.NoError(t, err)
+	require.Equal(t, types.EntryStatus_ENTRY_STATUS_PENDING, entry.Status)
+	require.Len(t, entry.Approvals, 1)
+
+	_, err = srv.ApproveEntry(f.ctx, &types.MsgApproveEntry{
+		Approver:           approverA,
+		Id:                 createResp.Id,
+		EvidenceUri:        "ipfs://evidence-a",
+		LiabilitySignature: "sig-a",
+	})
+	require.ErrorIs(t, err, types.ErrDuplicateApproval)
+
+	_, err = srv.ApproveEntry(f.ctx, &types.MsgApproveEntry{
+		Approver:           approverB,
+		Id:                 createResp.Id,
+		EvidenceUri:        "ipfs://evidence-b",
+		LiabilitySignature: "sig-b",
+	})
+	require.NoError(t, err)
+
+	entry, err = f.keeper.Entry.Get(f.ctx, createResp.Id)
+	require.NoError(t, err)
+	require.Equal(t, types.EntryStatus_ENTRY_STATUS_APPROVED, entry.Status)
+	require.Len(t, entry.Approvals, 2)
 }

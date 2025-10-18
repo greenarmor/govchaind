@@ -16,6 +16,8 @@ func TestMsgUpdateParams(t *testing.T) {
 	params := types.DefaultParams()
 	require.NoError(t, f.keeper.Params.Set(f.ctx, params))
 
+	customParams := types.NewParams(params.MinRequiredApprovals+1, params.MinAccountabilityScore-5, params.ApprovalMetric)
+
 	authorityStr, err := f.addressCodec.BytesToString(f.keeper.GetAuthority())
 	require.NoError(t, err)
 
@@ -39,7 +41,7 @@ func TestMsgUpdateParams(t *testing.T) {
 			name: "send enabled param",
 			input: &types.MsgUpdateParams{
 				Authority: authorityStr,
-				Params:    types.Params{},
+				Params:    customParams,
 			},
 			expErr: false,
 		},

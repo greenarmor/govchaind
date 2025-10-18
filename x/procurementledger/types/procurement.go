@@ -5,6 +5,8 @@ import (
 	"strings"
 
 	sdkmath "cosmossdk.io/math"
+
+	accountabilitytypes "govchain/x/accountabilityscores/types"
 )
 
 // ProcurementStatus captures the lifecycle of a procurement record.
@@ -42,6 +44,10 @@ type Procurement struct {
 	Status      ProcurementStatus `json:"status" yaml:"status"`
 	MetadataURI string            `json:"metadata_uri" yaml:"metadata_uri"`
 	Officer     string            `json:"officer" yaml:"officer"`
+	// LiabilityContractURI references the contract accepted by approvers
+	// before the procurement can advance past tendering.
+	LiabilityContractURI string                         `json:"liability_contract_uri" yaml:"liability_contract_uri"`
+	Approvals            []accountabilitytypes.Approval `json:"approvals" yaml:"approvals"`
 }
 
 // ValidateBasic ensures the procurement entry is well formed.
@@ -72,6 +78,14 @@ func (p Procurement) ValidateBasic() error {
 	}
 	if _, ok := procurementTransitions[p.Status]; !ok {
 		return fmt.Errorf("unknown procurement status: %s", p.Status)
+	}
+	if strings.TrimSpace(p.LiabilityContractURI) == "" && p.Status != ProcurementStatusPlanning {
+		return fmt.Errorf("liability contract uri required once procurement leaves planning")
+	}
+	for _, approval := range p.Approvals {
+		if err := approval.ValidateBasic(); err != nil {
+			return err
+		}
 	}
 	return nil
 }

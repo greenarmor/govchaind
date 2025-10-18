@@ -1,0 +1,90 @@
+diff --git a/x/wasm/module/module.go b/x/wasm/module/module.go
+index 0f88f89b3c2f1d2018704132b8a168d114a5688b..982b6a31273385938d2a42f10788f7092d51422d 100644
+--- a/x/wasm/module/module.go
++++ b/x/wasm/module/module.go
+@@ -49,77 +49,81 @@ func (AppModule) IsAppModule() {}
+ // Name returns the name of the module as a string.
+ func (AppModule) Name() string {
+ 	return types.ModuleName
+ }
+ 
+ // RegisterLegacyAminoCodec registers the amino codec
+ func (AppModule) RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
+ 	types.RegisterLegacyAminoCodec(cdc)
+ }
+ 
+ // RegisterGRPCGatewayRoutes registers the gRPC Gateway routes for the module.
+ func (AppModule) RegisterGRPCGatewayRoutes(client.Context, *runtime.ServeMux) {}
+ 
+ // RegisterInterfaces registers a module's interface types and their concrete implementations as proto.Message.
+ func (AppModule) RegisterInterfaces(registrar codectypes.InterfaceRegistry) {
+ 	types.RegisterInterfaces(registrar)
+ }
+ 
+ // RegisterServices registers gRPC services. The placeholder module does not expose any Msg or Query services yet.
+ func (AppModule) RegisterServices(grpc.ServiceRegistrar) error {
+ 	return nil
+ }
+ 
+ // DefaultGenesis returns a default GenesisState for the module, marshalled to json.RawMessage.
+ func (am AppModule) DefaultGenesis(codec.JSONCodec) json.RawMessage {
+-	return am.cdc.MustMarshalJSON(types.DefaultGenesis())
++	bz, err := json.Marshal(types.DefaultGenesis())
++	if err != nil {
++		panic(err)
++	}
++	return bz
+ }
+ 
+ // ValidateGenesis used to validate the GenesisState, given in its json.RawMessage form.
+ func (am AppModule) ValidateGenesis(_ codec.JSONCodec, _ client.TxEncodingConfig, bz json.RawMessage) error {
+ 	var genState types.GenesisState
+-	if err := am.cdc.UnmarshalJSON(bz, &genState); err != nil {
++	if err := json.Unmarshal(bz, &genState); err != nil {
+ 		return err
+ 	}
+ 
+ 	return genState.Validate()
+ }
+ 
+ // InitGenesis performs the module's genesis initialization. It returns no validator updates.
+ func (am AppModule) InitGenesis(ctx sdk.Context, _ codec.JSONCodec, gs json.RawMessage) {
+ 	var genState types.GenesisState
+-	if err := am.cdc.UnmarshalJSON(gs, &genState); err != nil {
++	if err := json.Unmarshal(gs, &genState); err != nil {
+ 		panic(err)
+ 	}
+ 
+ 	if err := am.keeper.InitGenesis(ctx, genState); err != nil {
+ 		panic(err)
+ 	}
+ }
+ 
+ // ExportGenesis returns the module's exported genesis state as raw JSON bytes.
+ func (am AppModule) ExportGenesis(ctx sdk.Context, _ codec.JSONCodec) json.RawMessage {
+ 	genState, err := am.keeper.ExportGenesis(ctx)
+ 	if err != nil {
+ 		panic(err)
+ 	}
+ 
+-	bz, err := am.cdc.MarshalJSON(genState)
++	bz, err := json.Marshal(genState)
+ 	if err != nil {
+ 		panic(err)
+ 	}
+ 
+ 	return bz
+ }
+ 
+ // ConsensusVersion identifies state breaking changes for the module.
+ func (AppModule) ConsensusVersion() uint64 { return 1 }
+ 
+ // BeginBlock contains the logic that is automatically triggered at the beginning of each block.
+ func (AppModule) BeginBlock(context.Context) error {
+ 	return nil
+ }
+ 
+ // EndBlock contains the logic that is automatically triggered at the end of each block.
+ func (AppModule) EndBlock(context.Context) error {
+ 	return nil
+ }

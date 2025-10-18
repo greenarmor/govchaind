@@ -10,4 +10,8 @@ option go_package = "govchain/x/datasets/types";
 message Params {
   option (amino.name) = "govchain/x/datasets/Params";
   option (gogoproto.equal) = true;
+
+  uint32 min_required_approvals = 1;
+  uint32 min_accountability_score = 2;
+  string approval_metric = 3;
 }
