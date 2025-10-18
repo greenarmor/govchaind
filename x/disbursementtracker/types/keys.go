@@ -1,5 +1,7 @@
 package types
 
+import "cosmossdk.io/collections"
+
 const (
 	ModuleName  = "disbursementtracker"
 	StoreKey    = ModuleName
@@ -7,7 +9,13 @@ const (
 	MemStoreKey = "mem_disbursementtracker"
 )
 
-// KeyPrefix prepares module map prefixes for use with the Cosmos SDK KVStore APIs.
+var (
+	DisbursementKey      = collections.NewPrefix("disbursement/value/")
+	DisbursementCountKey = collections.NewPrefix("disbursement/count/")
+	DisbursementTotalKey = collections.NewPrefix("disbursement/total/")
+)
+
+// KeyPrefix kept for compatibility with scaffolding helpers.
 func KeyPrefix(key string) []byte {
 	return []byte(key)
 }

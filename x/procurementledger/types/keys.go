@@ -1,5 +1,7 @@
 package types
 
+import "cosmossdk.io/collections"
+
 const (
 	ModuleName  = "procurementledger"
 	StoreKey    = ModuleName
@@ -7,7 +9,12 @@ const (
 	MemStoreKey = "mem_procurementledger"
 )
 
-// KeyPrefix converts a storage key name into a []byte prefix.
+var (
+	ProcurementKey      = collections.NewPrefix("procurement/value/")
+	ProcurementCountKey = collections.NewPrefix("procurement/count/")
+)
+
+// KeyPrefix is retained for backwards compatibility with scaffolding helpers.
 func KeyPrefix(key string) []byte {
 	return []byte(key)
 }

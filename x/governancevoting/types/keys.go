@@ -1,5 +1,7 @@
 package types
 
+import "cosmossdk.io/collections"
+
 const (
 	ModuleName  = "governancevoting"
 	StoreKey    = ModuleName
@@ -7,7 +9,13 @@ const (
 	MemStoreKey = "mem_governancevoting"
 )
 
-// KeyPrefix provides a helper for generating byte prefixes from string identifiers.
+var (
+	DelegationKey      = collections.NewPrefix("delegation/value/")
+	DelegationCountKey = collections.NewPrefix("delegation/count/")
+	DelegationIndexKey = collections.NewPrefix("delegation/index/")
+)
+
+// KeyPrefix maintained for compatibility with scaffolding helpers.
 func KeyPrefix(key string) []byte {
 	return []byte(key)
 }
