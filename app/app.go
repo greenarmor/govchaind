@@ -47,6 +47,7 @@ import (
 
 	"govchain/docs"
 	datasetsmodulekeeper "govchain/x/datasets/keeper"
+	wasmkeeper "govchain/x/wasm/keeper"
 )
 
 const (
@@ -101,6 +102,7 @@ type App struct {
 	// simulation manager
 	sm             *module.SimulationManager
 	DatasetsKeeper datasetsmodulekeeper.Keeper
+	WasmKeeper     wasmkeeper.Keeper
 }
 
 func init() {
@@ -174,6 +176,7 @@ func New(
 		&app.CircuitBreakerKeeper,
 		&app.ParamsKeeper,
 		&app.DatasetsKeeper,
+		&app.WasmKeeper,
 	); err != nil {
 		panic(err)
 	}

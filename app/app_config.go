@@ -3,6 +3,8 @@ package app
 import (
 	_ "govchain/x/datasets/module"
 	datasetsmoduletypes "govchain/x/datasets/types"
+	_ "govchain/x/wasm/module"
+	wasmmoduletypes "govchain/x/wasm/types"
 	"time"
 
 	runtimev1alpha1 "cosmossdk.io/api/cosmos/app/runtime/v1alpha1"
@@ -83,6 +85,7 @@ var (
 		{Account: nft.ModuleName},
 		{Account: ibctransfertypes.ModuleName, Permissions: []string{authtypes.Minter, authtypes.Burner}},
 		{Account: icatypes.ModuleName},
+		{Account: wasmmoduletypes.ModuleName},
 	}
 
 	// blocked account addresses
@@ -93,6 +96,7 @@ var (
 		stakingtypes.BondedPoolName,
 		stakingtypes.NotBondedPoolName,
 		nft.ModuleName,
+		wasmmoduletypes.ModuleName,
 		// We allow the following module accounts to receive funds:
 		// govtypes.ModuleName
 	}
@@ -126,6 +130,7 @@ var (
 						ibcexported.ModuleName,
 						// chain modules
 						datasetsmoduletypes.ModuleName,
+						wasmmoduletypes.ModuleName,
 						// this line is used by starport scaffolding # stargate/app/beginBlockers
 					},
 					EndBlockers: []string{
@@ -135,6 +140,7 @@ var (
 						group.ModuleName,
 						// chain modules
 						datasetsmoduletypes.ModuleName,
+						wasmmoduletypes.ModuleName,
 						// this line is used by starport scaffolding # stargate/app/endBlockers
 					},
 					// The following is mostly only needed when ModuleName != StoreKey name.
@@ -172,6 +178,7 @@ var (
 						icatypes.ModuleName,
 						// chain modules
 						datasetsmoduletypes.ModuleName,
+						wasmmoduletypes.ModuleName,
 						// this line is used by starport scaffolding # stargate/app/initGenesis
 					},
 				}),
@@ -271,6 +278,10 @@ var (
 			{
 				Name:   datasetsmoduletypes.ModuleName,
 				Config: appconfig.WrapAny(&datasetsmoduletypes.Module{}),
+			},
+			{
+				Name:   wasmmoduletypes.ModuleName,
+				Config: appconfig.WrapAny(&wasmmoduletypes.Module{}),
 			},
 			// this line is used by starport scaffolding # stargate/app/moduleConfig
 		},
