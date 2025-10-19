@@ -20,30 +20,11 @@ func TestGenesisState_Validate(t *testing.T) {
 			valid:    true,
 		},
 		{
-			desc: "valid genesis state",
-			genState: &types.GenesisState{
-				Params: types.DefaultParams(),
-				EntryList: []types.Entry{
-					{
-						Id:                0,
-						Status:            types.EntryStatus_ENTRY_STATUS_PENDING,
-						RequiredApprovals: types.DefaultParams().MinRequiredApprovals,
-						LiabilityContract: "ipfs://contract",
-					},
-					{
-						Id:                1,
-						Status:            types.EntryStatus_ENTRY_STATUS_PENDING,
-						RequiredApprovals: types.DefaultParams().MinRequiredApprovals,
-						LiabilityContract: "ipfs://contract",
-					},
-				},
-				EntryCount: 2,
-			},
-			valid: true,
+			desc:     "valid genesis state",
+			genState: &types.GenesisState{EntryList: []types.Entry{{Id: 0}, {Id: 1}}, EntryCount: 2}, valid: true,
 		}, {
 			desc: "duplicated entry",
 			genState: &types.GenesisState{
-				Params: types.DefaultParams(),
 				EntryList: []types.Entry{
 					{
 						Id: 0,
@@ -57,7 +38,6 @@ func TestGenesisState_Validate(t *testing.T) {
 		}, {
 			desc: "invalid entry count",
 			genState: &types.GenesisState{
-				Params: types.DefaultParams(),
 				EntryList: []types.Entry{
 					{
 						Id: 1,

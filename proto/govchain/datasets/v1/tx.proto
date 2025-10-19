@@ -21,9 +21,6 @@ service Msg {
   // CreateEntry defines the CreateEntry RPC.
   rpc CreateEntry(MsgCreateEntry) returns (MsgCreateEntryResponse);
 
-  // ApproveEntry records an accountability-backed approval for publication.
-  rpc ApproveEntry(MsgApproveEntry) returns (MsgApproveEntryResponse);
-
   // UpdateEntry defines the UpdateEntry RPC.
   rpc UpdateEntry(MsgUpdateEntry) returns (MsgUpdateEntryResponse);
 
@@ -70,8 +67,6 @@ message MsgCreateEntry {
   string submitter = 13;
   string timestamp = 14;
   string pin_count = 15;
-  uint32 required_approvals = 16;
-  string liability_contract = 17;
 }
 
 // MsgCreateEntryResponse defines the MsgCreateEntryResponse message.
@@ -102,18 +97,6 @@ message MsgUpdateEntry {
 
 // MsgUpdateEntryResponse defines the MsgUpdateEntryResponse message.
 message MsgUpdateEntryResponse {}
-
-// MsgApproveEntry records an approval for a pending entry.
-message MsgApproveEntry {
-  option (cosmos.msg.v1.signer) = "approver";
-  string approver = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
-  uint64 id = 2;
-  string evidence_uri = 3;
-  string liability_signature = 4;
-}
-
-// MsgApproveEntryResponse acknowledges the approval.
-message MsgApproveEntryResponse {}
 
 // MsgDeleteEntry defines the MsgDeleteEntry message.
 message MsgDeleteEntry {

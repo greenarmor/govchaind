@@ -13,33 +13,15 @@ import (
 	moduletestutil "github.com/cosmos/cosmos-sdk/types/module/testutil"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	accountabilitykeeper "govchain/x/accountabilityscores/keeper"
-	accountabilitytypes "govchain/x/accountabilityscores/types"
 	"govchain/x/datasets/keeper"
 	module "govchain/x/datasets/module"
 	"govchain/x/datasets/types"
 )
 
 type fixture struct {
-	ctx                  context.Context
-	keeper               keeper.Keeper
-	addressCodec         address.Codec
-	accountabilityKeeper accountabilitykeeper.Keeper
-}
-
-func (f *fixture) setScorecard(t *testing.T, addr, metric string, score uint32) {
-	t.Helper()
-	_, err := f.accountabilityKeeper.UpsertScorecard(f.ctx, accountabilitytypes.Scorecard{
-		Subject:     addr,
-		Metric:      metric,
-		Score:       score,
-		Weight:      1,
-		EvidenceURI: "ipfs://evidence",
-		UpdatedBy:   addr,
-	})
-	if err != nil {
-		t.Fatalf("failed to set scorecard: %v", err)
-	}
+	ctx          context.Context
+	keeper       keeper.Keeper
+	addressCodec address.Codec
 }
 
 func initFixture(t *testing.T) *fixture {
@@ -48,32 +30,17 @@ func initFixture(t *testing.T) *fixture {
 	encCfg := moduletestutil.MakeTestEncodingConfig(module.AppModule{})
 	addressCodec := addresscodec.NewBech32Codec(sdk.GetConfig().GetBech32AccountAddrPrefix())
 	storeKey := storetypes.NewKVStoreKey(types.StoreKey)
-	accountabilityKey := storetypes.NewKVStoreKey(accountabilitytypes.StoreKey)
 
 	storeService := runtime.NewKVStoreService(storeKey)
-	accountabilityStoreService := runtime.NewKVStoreService(accountabilityKey)
-	testCtx := testutil.DefaultContextWithDB(t, storeKey, storetypes.NewTransientStoreKey("transient_test"))
-	// mount accountability store on the same multi-store
-	testCtx.CMS.MountStoreWithDB(accountabilityKey, storetypes.StoreTypeIAVL, testCtx.DB)
-	if err := testCtx.CMS.LoadLatestVersion(); err != nil {
-		t.Fatalf("failed to load accountability store: %v", err)
-	}
-	ctx := testCtx.Ctx
+	ctx := testutil.DefaultContextWithDB(t, storeKey, storetypes.NewTransientStoreKey("transient_test")).Ctx
 
 	authority := authtypes.NewModuleAddress(types.GovModuleName)
-
-	accountabilityKeeper := accountabilitykeeper.NewKeeper(
-		accountabilityStoreService,
-		encCfg.Codec,
-		addressCodec,
-	)
 
 	k := keeper.NewKeeper(
 		storeService,
 		encCfg.Codec,
 		addressCodec,
 		authority,
-		accountabilityKeeper,
 	)
 
 	// Initialize params
@@ -82,9 +49,8 @@ func initFixture(t *testing.T) *fixture {
 	}
 
 	return &fixture{
-		ctx:                  ctx,
-		keeper:               k,
-		addressCodec:         addressCodec,
-		accountabilityKeeper: accountabilityKeeper,
+		ctx:          ctx,
+		keeper:       k,
+		addressCodec: addressCodec,
 	}
 }

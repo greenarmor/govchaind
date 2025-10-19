@@ -6,18 +6,19 @@ package types
 import (
 	context "context"
 	fmt "fmt"
-	_ "github.com/cosmos/cosmos-proto"
-	_ "github.com/cosmos/cosmos-sdk/types/msgservice"
-	_ "github.com/cosmos/cosmos-sdk/types/tx/amino"
-	grpc1 "github.com/cosmos/gogoproto/grpc"
-	proto "github.com/cosmos/gogoproto/proto"
-	_ "github.com/gogo/protobuf/gogoproto"
-	grpc "google.golang.org/grpc"
-	codes "google.golang.org/grpc/codes"
-	status "google.golang.org/grpc/status"
 	io "io"
 	math "math"
 	math_bits "math/bits"
+
+	_ "github.com/cosmos/cosmos-proto"
+	_ "github.com/cosmos/cosmos-sdk/types/msgservice"
+	_ "github.com/cosmos/cosmos-sdk/types/tx/amino"
+	_ "github.com/cosmos/gogoproto/gogoproto"
+	grpc1 "github.com/cosmos/gogoproto/grpc"
+	proto "github.com/cosmos/gogoproto/proto"
+	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -126,23 +127,21 @@ var xxx_messageInfo_MsgUpdateParamsResponse proto.InternalMessageInfo
 
 // MsgCreateEntry defines the MsgCreateEntry message.
 type MsgCreateEntry struct {
-	Creator           string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
-	Title             string `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
-	Description       string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-	IpfsCid           string `protobuf:"bytes,4,opt,name=ipfs_cid,json=ipfsCid,proto3" json:"ipfs_cid,omitempty"`
-	MimeType          string `protobuf:"bytes,5,opt,name=mime_type,json=mimeType,proto3" json:"mime_type,omitempty"`
-	FileName          string `protobuf:"bytes,6,opt,name=file_name,json=fileName,proto3" json:"file_name,omitempty"`
-	FileUrl           string `protobuf:"bytes,7,opt,name=file_url,json=fileUrl,proto3" json:"file_url,omitempty"`
-	FallbackUrl       string `protobuf:"bytes,8,opt,name=fallback_url,json=fallbackUrl,proto3" json:"fallback_url,omitempty"`
-	FileSize          string `protobuf:"bytes,9,opt,name=file_size,json=fileSize,proto3" json:"file_size,omitempty"`
-	ChecksumSha_256   string `protobuf:"bytes,10,opt,name=checksum_sha_256,json=checksumSha256,proto3" json:"checksum_sha_256,omitempty"`
-	Agency            string `protobuf:"bytes,11,opt,name=agency,proto3" json:"agency,omitempty"`
-	Category          string `protobuf:"bytes,12,opt,name=category,proto3" json:"category,omitempty"`
-	Submitter         string `protobuf:"bytes,13,opt,name=submitter,proto3" json:"submitter,omitempty"`
-	Timestamp         string `protobuf:"bytes,14,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
-	PinCount          string `protobuf:"bytes,15,opt,name=pin_count,json=pinCount,proto3" json:"pin_count,omitempty"`
-	RequiredApprovals uint32 `protobuf:"varint,16,opt,name=required_approvals,json=requiredApprovals,proto3" json:"required_approvals,omitempty"`
-	LiabilityContract string `protobuf:"bytes,17,opt,name=liability_contract,json=liabilityContract,proto3" json:"liability_contract,omitempty"`
+	Creator         string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	Title           string `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
+	Description     string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	IpfsCid         string `protobuf:"bytes,4,opt,name=ipfs_cid,json=ipfsCid,proto3" json:"ipfs_cid,omitempty"`
+	MimeType        string `protobuf:"bytes,5,opt,name=mime_type,json=mimeType,proto3" json:"mime_type,omitempty"`
+	FileName        string `protobuf:"bytes,6,opt,name=file_name,json=fileName,proto3" json:"file_name,omitempty"`
+	FileUrl         string `protobuf:"bytes,7,opt,name=file_url,json=fileUrl,proto3" json:"file_url,omitempty"`
+	FallbackUrl     string `protobuf:"bytes,8,opt,name=fallback_url,json=fallbackUrl,proto3" json:"fallback_url,omitempty"`
+	FileSize        string `protobuf:"bytes,9,opt,name=file_size,json=fileSize,proto3" json:"file_size,omitempty"`
+	ChecksumSha_256 string `protobuf:"bytes,10,opt,name=checksum_sha_256,json=checksumSha256,proto3" json:"checksum_sha_256,omitempty"`
+	Agency          string `protobuf:"bytes,11,opt,name=agency,proto3" json:"agency,omitempty"`
+	Category        string `protobuf:"bytes,12,opt,name=category,proto3" json:"category,omitempty"`
+	Submitter       string `protobuf:"bytes,13,opt,name=submitter,proto3" json:"submitter,omitempty"`
+	Timestamp       string `protobuf:"bytes,14,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
+	PinCount        string `protobuf:"bytes,15,opt,name=pin_count,json=pinCount,proto3" json:"pin_count,omitempty"`
 }
 
 func (m *MsgCreateEntry) Reset()         { *m = MsgCreateEntry{} }
@@ -279,20 +278,6 @@ func (m *MsgCreateEntry) GetTimestamp() string {
 func (m *MsgCreateEntry) GetPinCount() string {
 	if m != nil {
 		return m.PinCount
-	}
-	return ""
-}
-
-func (m *MsgCreateEntry) GetRequiredApprovals() uint32 {
-	if m != nil {
-		return m.RequiredApprovals
-	}
-	return 0
-}
-
-func (m *MsgCreateEntry) GetLiabilityContract() string {
-	if m != nil {
-		return m.LiabilityContract
 	}
 	return ""
 }
@@ -544,112 +529,6 @@ func (m *MsgUpdateEntryResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgUpdateEntryResponse proto.InternalMessageInfo
 
-// MsgApproveEntry records an approval for a pending entry.
-type MsgApproveEntry struct {
-	Approver           string `protobuf:"bytes,1,opt,name=approver,proto3" json:"approver,omitempty"`
-	Id                 uint64 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
-	EvidenceUri        string `protobuf:"bytes,3,opt,name=evidence_uri,json=evidenceUri,proto3" json:"evidence_uri,omitempty"`
-	LiabilitySignature string `protobuf:"bytes,4,opt,name=liability_signature,json=liabilitySignature,proto3" json:"liability_signature,omitempty"`
-}
-
-func (m *MsgApproveEntry) Reset()         { *m = MsgApproveEntry{} }
-func (m *MsgApproveEntry) String() string { return proto.CompactTextString(m) }
-func (*MsgApproveEntry) ProtoMessage()    {}
-func (*MsgApproveEntry) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c94f77eb4f7727a8, []int{6}
-}
-func (m *MsgApproveEntry) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgApproveEntry) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgApproveEntry.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgApproveEntry) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgApproveEntry.Merge(m, src)
-}
-func (m *MsgApproveEntry) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgApproveEntry) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgApproveEntry.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MsgApproveEntry proto.InternalMessageInfo
-
-func (m *MsgApproveEntry) GetApprover() string {
-	if m != nil {
-		return m.Approver
-	}
-	return ""
-}
-
-func (m *MsgApproveEntry) GetId() uint64 {
-	if m != nil {
-		return m.Id
-	}
-	return 0
-}
-
-func (m *MsgApproveEntry) GetEvidenceUri() string {
-	if m != nil {
-		return m.EvidenceUri
-	}
-	return ""
-}
-
-func (m *MsgApproveEntry) GetLiabilitySignature() string {
-	if m != nil {
-		return m.LiabilitySignature
-	}
-	return ""
-}
-
-// MsgApproveEntryResponse acknowledges the approval.
-type MsgApproveEntryResponse struct {
-}
-
-func (m *MsgApproveEntryResponse) Reset()         { *m = MsgApproveEntryResponse{} }
-func (m *MsgApproveEntryResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgApproveEntryResponse) ProtoMessage()    {}
-func (*MsgApproveEntryResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c94f77eb4f7727a8, []int{7}
-}
-func (m *MsgApproveEntryResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgApproveEntryResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgApproveEntryResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgApproveEntryResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgApproveEntryResponse.Merge(m, src)
-}
-func (m *MsgApproveEntryResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgApproveEntryResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgApproveEntryResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MsgApproveEntryResponse proto.InternalMessageInfo
-
 // MsgDeleteEntry defines the MsgDeleteEntry message.
 type MsgDeleteEntry struct {
 	Creator string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
@@ -660,7 +539,7 @@ func (m *MsgDeleteEntry) Reset()         { *m = MsgDeleteEntry{} }
 func (m *MsgDeleteEntry) String() string { return proto.CompactTextString(m) }
 func (*MsgDeleteEntry) ProtoMessage()    {}
 func (*MsgDeleteEntry) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c94f77eb4f7727a8, []int{8}
+	return fileDescriptor_c94f77eb4f7727a8, []int{6}
 }
 func (m *MsgDeleteEntry) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -711,7 +590,7 @@ func (m *MsgDeleteEntryResponse) Reset()         { *m = MsgDeleteEntryResponse{}
 func (m *MsgDeleteEntryResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgDeleteEntryResponse) ProtoMessage()    {}
 func (*MsgDeleteEntryResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c94f77eb4f7727a8, []int{9}
+	return fileDescriptor_c94f77eb4f7727a8, []int{7}
 }
 func (m *MsgDeleteEntryResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -747,8 +626,6 @@ func init() {
 	proto.RegisterType((*MsgCreateEntryResponse)(nil), "govchain.datasets.v1.MsgCreateEntryResponse")
 	proto.RegisterType((*MsgUpdateEntry)(nil), "govchain.datasets.v1.MsgUpdateEntry")
 	proto.RegisterType((*MsgUpdateEntryResponse)(nil), "govchain.datasets.v1.MsgUpdateEntryResponse")
-	proto.RegisterType((*MsgApproveEntry)(nil), "govchain.datasets.v1.MsgApproveEntry")
-	proto.RegisterType((*MsgApproveEntryResponse)(nil), "govchain.datasets.v1.MsgApproveEntryResponse")
 	proto.RegisterType((*MsgDeleteEntry)(nil), "govchain.datasets.v1.MsgDeleteEntry")
 	proto.RegisterType((*MsgDeleteEntryResponse)(nil), "govchain.datasets.v1.MsgDeleteEntryResponse")
 }
@@ -756,64 +633,55 @@ func init() {
 func init() { proto.RegisterFile("govchain/datasets/v1/tx.proto", fileDescriptor_c94f77eb4f7727a8) }
 
 var fileDescriptor_c94f77eb4f7727a8 = []byte{
-	// 902 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x96, 0xbf, 0x6f, 0x23, 0x45,
-	0x14, 0xc7, 0xb3, 0x89, 0xe3, 0xd8, 0x63, 0xc7, 0x49, 0x86, 0xe8, 0x6e, 0x62, 0x0e, 0x93, 0x98,
-	0x43, 0xb2, 0x22, 0x62, 0xeb, 0x7c, 0x5c, 0x8a, 0x34, 0xe8, 0x12, 0x28, 0x83, 0x90, 0x43, 0x1a,
-	0x9a, 0xd5, 0x78, 0x77, 0xb2, 0x1e, 0xdd, 0xfe, 0x62, 0x66, 0x6c, 0x9d, 0xaf, 0xe2, 0x28, 0xa9,
-	0xf8, 0x33, 0x28, 0x53, 0x50, 0x51, 0x52, 0x5d, 0x47, 0x44, 0x45, 0x85, 0x50, 0x52, 0xe4, 0xdf,
-	0x40, 0x33, 0xb3, 0xb3, 0xde, 0x84, 0xf5, 0x3a, 0x42, 0xd7, 0x58, 0x7e, 0xef, 0xfb, 0xf6, 0xfb,
-	0xe6, 0xed, 0x7e, 0x76, 0x66, 0xc1, 0x47, 0x5e, 0x34, 0x71, 0x46, 0x98, 0x86, 0x3d, 0x17, 0x0b,
-	0xcc, 0x89, 0xe0, 0xbd, 0xc9, 0xb3, 0x9e, 0x78, 0xdd, 0x8d, 0x59, 0x24, 0x22, 0xb8, 0x6d, 0xe4,
-	0xae, 0x91, 0xbb, 0x93, 0x67, 0xcd, 0x2d, 0x1c, 0xd0, 0x30, 0xea, 0xa9, 0x5f, 0x5d, 0xd8, 0x7c,
-	0xec, 0x44, 0x3c, 0x88, 0x78, 0x2f, 0xe0, 0x9e, 0x34, 0x08, 0xb8, 0x97, 0x08, 0x3b, 0x5a, 0xb0,
-	0x55, 0xd4, 0xd3, 0x41, 0x22, 0x6d, 0x7b, 0x91, 0x17, 0xe9, 0xbc, 0xfc, 0x97, 0x64, 0xf7, 0x72,
-	0x57, 0x14, 0x63, 0x86, 0x83, 0xe4, 0xc2, 0xf6, 0xef, 0x16, 0xd8, 0x38, 0xe5, 0xde, 0x79, 0xec,
-	0x62, 0x41, 0xbe, 0x51, 0x0a, 0x3c, 0x04, 0x55, 0x3c, 0x16, 0xa3, 0x88, 0x51, 0x31, 0x45, 0xd6,
-	0xae, 0xd5, 0xa9, 0x1e, 0xa3, 0x3f, 0x7f, 0x3d, 0xd8, 0x4e, 0x3a, 0xbe, 0x74, 0x5d, 0x46, 0x38,
-	0x3f, 0x13, 0x8c, 0x86, 0xde, 0x60, 0x56, 0x0a, 0xbf, 0x00, 0x65, 0xed, 0x8d, 0x96, 0x77, 0xad,
-	0x4e, 0xad, 0xff, 0xa4, 0x9b, 0x37, 0x72, 0x57, 0x77, 0x39, 0xae, 0xbe, 0xfb, 0xfb, 0xe3, 0xa5,
-	0x5f, 0x6e, 0x2f, 0xf7, 0xad, 0x41, 0x72, 0xd9, 0xd1, 0xe1, 0x8f, 0xb7, 0x97, 0xfb, 0x33, 0xc3,
-	0x9f, 0x6e, 0x2f, 0xf7, 0x3f, 0x49, 0x47, 0x78, 0x3d, 0x1b, 0xe2, 0xde, 0x82, 0xdb, 0x3b, 0xe0,
-	0xf1, 0xbd, 0xd4, 0x80, 0xf0, 0x38, 0x0a, 0x39, 0x69, 0xff, 0x51, 0x02, 0x8d, 0x53, 0xee, 0x9d,
-	0x30, 0x82, 0x05, 0xf9, 0x2a, 0x14, 0x6c, 0x0a, 0xfb, 0x60, 0xcd, 0x91, 0x61, 0xc4, 0x16, 0x0e,
-	0x67, 0x0a, 0xe1, 0x36, 0x58, 0x15, 0x54, 0xf8, 0x44, 0x4d, 0x56, 0x1d, 0xe8, 0x00, 0xee, 0x82,
-	0x9a, 0x4b, 0xb8, 0xc3, 0x68, 0x2c, 0x68, 0x14, 0xa2, 0x15, 0xa5, 0x65, 0x53, 0x70, 0x07, 0x54,
-	0x68, 0x7c, 0xc1, 0x6d, 0x87, 0xba, 0xa8, 0xa4, 0xe4, 0x35, 0x19, 0x9f, 0x50, 0x17, 0x7e, 0x08,
-	0xaa, 0x01, 0x0d, 0x88, 0x2d, 0xa6, 0x31, 0x41, 0xab, 0x4a, 0xab, 0xc8, 0xc4, 0xb7, 0xd3, 0x98,
-	0x48, 0xf1, 0x82, 0xfa, 0xc4, 0x0e, 0x71, 0x40, 0x50, 0x59, 0x8b, 0x32, 0xf1, 0x35, 0x0e, 0x88,
-	0x34, 0x55, 0xe2, 0x98, 0xf9, 0x68, 0x4d, 0x9b, 0xca, 0xf8, 0x9c, 0xf9, 0x70, 0x0f, 0xd4, 0x2f,
-	0xb0, 0xef, 0x0f, 0xb1, 0xf3, 0x4a, 0xc9, 0x15, 0xbd, 0x24, 0x93, 0x93, 0x25, 0xc6, 0x9a, 0xd3,
-	0x37, 0x04, 0x55, 0x67, 0xd6, 0x67, 0xf4, 0x0d, 0x81, 0x1d, 0xb0, 0xe9, 0x8c, 0x88, 0xf3, 0x8a,
-	0x8f, 0x03, 0x9b, 0x8f, 0xb0, 0xdd, 0x7f, 0x71, 0x88, 0x80, 0xaa, 0x69, 0x98, 0xfc, 0xd9, 0x08,
-	0xf7, 0x5f, 0x1c, 0xc2, 0x47, 0xa0, 0x8c, 0x3d, 0x12, 0x3a, 0x53, 0x54, 0x53, 0x7a, 0x12, 0xc1,
-	0x26, 0xa8, 0x38, 0x58, 0x10, 0x2f, 0x62, 0x53, 0x54, 0xd7, 0xee, 0x26, 0x86, 0x4f, 0x40, 0x95,
-	0x8f, 0x87, 0x01, 0x15, 0x82, 0x30, 0xb4, 0xae, 0xc4, 0x59, 0x42, 0xaa, 0x82, 0x06, 0x84, 0x0b,
-	0x1c, 0xc4, 0xa8, 0xa1, 0xd5, 0x34, 0x21, 0x97, 0x1d, 0xd3, 0xd0, 0x76, 0xa2, 0x71, 0x28, 0xd0,
-	0x86, 0x36, 0x8e, 0x69, 0x78, 0x22, 0x63, 0x78, 0x00, 0x20, 0x23, 0xdf, 0x8f, 0x29, 0x23, 0xae,
-	0x8d, 0xe3, 0x98, 0x45, 0x13, 0xec, 0x73, 0xb4, 0xb9, 0x6b, 0x75, 0xd6, 0x07, 0x5b, 0x46, 0x79,
-	0x69, 0x04, 0x59, 0xee, 0x53, 0x3c, 0xa4, 0x3e, 0x15, 0x53, 0xdb, 0x89, 0x42, 0xc1, 0xb0, 0x23,
-	0xd0, 0x96, 0x32, 0xdd, 0x4a, 0x95, 0x93, 0x44, 0x38, 0xaa, 0x4b, 0x2c, 0x0d, 0x0a, 0xed, 0x0e,
-	0x78, 0x74, 0x17, 0x28, 0xc3, 0x1a, 0x6c, 0x80, 0x65, 0xea, 0x2a, 0xa6, 0x4a, 0x83, 0x65, 0xea,
-	0xb6, 0xdf, 0x6a, 0xf6, 0x34, 0x97, 0xff, 0x9f, 0x3d, 0x6d, 0xbb, 0x6c, 0x6c, 0x67, 0x2c, 0xae,
-	0x14, 0xb0, 0x58, 0x2a, 0x66, 0x71, 0xb5, 0x80, 0xc5, 0x72, 0x11, 0x8b, 0x6b, 0x05, 0x2c, 0x56,
-	0x8a, 0x59, 0xac, 0x2e, 0x60, 0x11, 0x3c, 0x80, 0xc5, 0xda, 0x02, 0x16, 0xeb, 0x73, 0x59, 0x5c,
-	0x2f, 0x62, 0xb1, 0x51, 0xc8, 0xe2, 0x46, 0x21, 0x8b, 0x9b, 0x77, 0x59, 0xbc, 0x47, 0x0b, 0x52,
-	0xb4, 0x64, 0x10, 0x48, 0x77, 0xa6, 0xdf, 0xf4, 0xce, 0xab, 0xa9, 0x4c, 0xf0, 0xf8, 0x1c, 0x54,
-	0x34, 0xbe, 0x64, 0x31, 0x1f, 0x69, 0xe5, 0x7f, 0x00, 0xd9, 0x03, 0x75, 0x32, 0xa1, 0x2e, 0x09,
-	0x1d, 0xf9, 0x5c, 0xa8, 0xd9, 0x97, 0x4c, 0xee, 0x9c, 0x51, 0xd8, 0x03, 0x1f, 0xcc, 0xde, 0x00,
-	0x4e, 0xbd, 0x10, 0x8b, 0x31, 0x23, 0x09, 0x35, 0xb3, 0x97, 0xe3, 0xcc, 0x28, 0x47, 0xeb, 0x72,
-	0xaa, 0xb4, 0x65, 0xb2, 0xe3, 0x66, 0xd7, 0x9e, 0xce, 0x35, 0x54, 0xd0, 0x7f, 0x49, 0x7c, 0xf2,
-	0x1e, 0xa1, 0xcf, 0xbd, 0xab, 0x99, 0x1e, 0xa6, 0x7b, 0xff, 0x6d, 0x09, 0xac, 0x9c, 0x72, 0x0f,
-	0xba, 0xa0, 0x7e, 0xe7, 0x4c, 0xfb, 0x34, 0xff, 0x2c, 0xba, 0x77, 0x6c, 0x34, 0x0f, 0x1e, 0x54,
-	0x96, 0xbe, 0xf1, 0x18, 0xd4, 0xb2, 0x27, 0xcb, 0xd3, 0xb9, 0x57, 0x67, 0xaa, 0x9a, 0x9f, 0x3d,
-	0xa4, 0x2a, 0x6d, 0xe1, 0x82, 0xfa, 0x1d, 0x44, 0xe6, 0x0f, 0x92, 0x2d, 0x2b, 0x18, 0x24, 0xef,
-	0xa1, 0xc9, 0x41, 0xb2, 0xdb, 0xd4, 0xd3, 0x05, 0xb7, 0x61, 0xd1, 0x20, 0x39, 0xbc, 0xcb, 0x16,
-	0x59, 0x28, 0xe6, 0xb7, 0xc8, 0x54, 0x15, 0xb4, 0xc8, 0x79, 0xf8, 0xcd, 0xd5, 0x1f, 0xe4, 0xe7,
-	0xc4, 0xf1, 0xf3, 0x77, 0xd7, 0x2d, 0xeb, 0xea, 0xba, 0x65, 0xfd, 0x73, 0xdd, 0xb2, 0x7e, 0xbe,
-	0x69, 0x2d, 0x5d, 0xdd, 0xb4, 0x96, 0xfe, 0xba, 0x69, 0x2d, 0x7d, 0xb7, 0x93, 0xf7, 0x35, 0x21,
-	0x37, 0x3d, 0x3e, 0x2c, 0xab, 0xef, 0xa1, 0xe7, 0xff, 0x06, 0x00, 0x00, 0xff, 0xff, 0xe9, 0x6c,
-	0x2f, 0x46, 0xc6, 0x09, 0x00, 0x00,
+	// 762 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x95, 0xbd, 0x4e, 0x1b, 0x4b,
+	0x14, 0xc7, 0xbd, 0xfe, 0xde, 0xb1, 0x31, 0xdc, 0x91, 0x05, 0x63, 0x5f, 0xae, 0x2f, 0x38, 0x44,
+	0xb2, 0x50, 0xb0, 0x85, 0x11, 0x2e, 0x68, 0xa2, 0x40, 0x52, 0x12, 0x45, 0x26, 0x34, 0x69, 0xac,
+	0xf1, 0xee, 0xb0, 0x1e, 0xe1, 0xfd, 0xd0, 0xce, 0x18, 0x61, 0xaa, 0x24, 0x65, 0xaa, 0xf4, 0x79,
+	0x81, 0x94, 0x14, 0x79, 0x82, 0x54, 0x94, 0x28, 0x55, 0xaa, 0x28, 0x82, 0x82, 0x3a, 0x6f, 0x10,
+	0xcd, 0x8c, 0xd7, 0x5e, 0x90, 0x59, 0xa3, 0x28, 0x8d, 0xe5, 0x73, 0xfe, 0x67, 0xff, 0x67, 0x46,
+	0xe7, 0x37, 0x33, 0xe0, 0x3f, 0xcb, 0x3d, 0x31, 0x7a, 0x98, 0x3a, 0x0d, 0x13, 0x73, 0xcc, 0x08,
+	0x67, 0x8d, 0x93, 0xcd, 0x06, 0x3f, 0xad, 0x7b, 0xbe, 0xcb, 0x5d, 0x58, 0x0c, 0xe4, 0x7a, 0x20,
+	0xd7, 0x4f, 0x36, 0xcb, 0xff, 0x60, 0x9b, 0x3a, 0x6e, 0x43, 0xfe, 0xaa, 0xc2, 0xf2, 0x92, 0xe1,
+	0x32, 0xdb, 0x65, 0x0d, 0x9b, 0x59, 0xc2, 0xc0, 0x66, 0xd6, 0x48, 0x28, 0x29, 0xa1, 0x23, 0xa3,
+	0x86, 0x0a, 0x46, 0x52, 0xd1, 0x72, 0x2d, 0x57, 0xe5, 0xc5, 0xbf, 0x51, 0x76, 0x75, 0xea, 0x8a,
+	0x3c, 0xec, 0x63, 0x7b, 0xf4, 0x61, 0xf5, 0xab, 0x06, 0xe6, 0xf7, 0x99, 0x75, 0xe8, 0x99, 0x98,
+	0x93, 0x57, 0x52, 0x81, 0x2d, 0xa0, 0xe3, 0x01, 0xef, 0xb9, 0x3e, 0xe5, 0x43, 0xa4, 0xad, 0x68,
+	0x35, 0x7d, 0x17, 0x7d, 0xfb, 0xb2, 0x51, 0x1c, 0x75, 0x7c, 0x66, 0x9a, 0x3e, 0x61, 0xec, 0x80,
+	0xfb, 0xd4, 0xb1, 0xda, 0x93, 0x52, 0xf8, 0x14, 0xa4, 0x95, 0x37, 0x8a, 0xaf, 0x68, 0xb5, 0x5c,
+	0x73, 0xb9, 0x3e, 0x6d, 0xcb, 0x75, 0xd5, 0x65, 0x57, 0xbf, 0xf8, 0xf1, 0x7f, 0xec, 0xf3, 0xcd,
+	0xf9, 0xba, 0xd6, 0x1e, 0x7d, 0xb6, 0xd3, 0x7a, 0x7f, 0x73, 0xbe, 0x3e, 0x31, 0xfc, 0x70, 0x73,
+	0xbe, 0xfe, 0x68, 0xbc, 0x85, 0xd3, 0xc9, 0x26, 0xee, 0x2c, 0xb8, 0x5a, 0x02, 0x4b, 0x77, 0x52,
+	0x6d, 0xc2, 0x3c, 0xd7, 0x61, 0xa4, 0xfa, 0x2b, 0x01, 0x0a, 0xfb, 0xcc, 0xda, 0xf3, 0x09, 0xe6,
+	0xe4, 0x85, 0xc3, 0xfd, 0x21, 0x6c, 0x82, 0x8c, 0x21, 0x42, 0xd7, 0x9f, 0xb9, 0xb9, 0xa0, 0x10,
+	0x16, 0x41, 0x8a, 0x53, 0xde, 0x27, 0x72, 0x67, 0x7a, 0x5b, 0x05, 0x70, 0x05, 0xe4, 0x4c, 0xc2,
+	0x0c, 0x9f, 0x7a, 0x9c, 0xba, 0x0e, 0x4a, 0x48, 0x2d, 0x9c, 0x82, 0x25, 0x90, 0xa5, 0xde, 0x11,
+	0xeb, 0x18, 0xd4, 0x44, 0x49, 0x29, 0x67, 0x44, 0xbc, 0x47, 0x4d, 0xf8, 0x2f, 0xd0, 0x6d, 0x6a,
+	0x93, 0x0e, 0x1f, 0x7a, 0x04, 0xa5, 0xa4, 0x96, 0x15, 0x89, 0xd7, 0x43, 0x8f, 0x08, 0xf1, 0x88,
+	0xf6, 0x49, 0xc7, 0xc1, 0x36, 0x41, 0x69, 0x25, 0x8a, 0xc4, 0x4b, 0x6c, 0x13, 0x61, 0x2a, 0xc5,
+	0x81, 0xdf, 0x47, 0x19, 0x65, 0x2a, 0xe2, 0x43, 0xbf, 0x0f, 0x57, 0x41, 0xfe, 0x08, 0xf7, 0xfb,
+	0x5d, 0x6c, 0x1c, 0x4b, 0x39, 0xab, 0x96, 0x14, 0xe4, 0x44, 0x49, 0x60, 0xcd, 0xe8, 0x19, 0x41,
+	0xfa, 0xc4, 0xfa, 0x80, 0x9e, 0x11, 0x58, 0x03, 0x0b, 0x46, 0x8f, 0x18, 0xc7, 0x6c, 0x60, 0x77,
+	0x58, 0x0f, 0x77, 0x9a, 0xdb, 0x2d, 0x04, 0x64, 0x4d, 0x21, 0xc8, 0x1f, 0xf4, 0x70, 0x73, 0xbb,
+	0x05, 0x17, 0x41, 0x1a, 0x5b, 0xc4, 0x31, 0x86, 0x28, 0x27, 0xf5, 0x51, 0x04, 0xcb, 0x20, 0x6b,
+	0x60, 0x4e, 0x2c, 0xd7, 0x1f, 0xa2, 0xbc, 0x72, 0x0f, 0x62, 0xb8, 0x0c, 0x74, 0x36, 0xe8, 0xda,
+	0x94, 0x73, 0xe2, 0xa3, 0x39, 0x29, 0x4e, 0x12, 0x42, 0xe5, 0xd4, 0x26, 0x8c, 0x63, 0xdb, 0x43,
+	0x05, 0xa5, 0x8e, 0x13, 0x62, 0xd9, 0x1e, 0x75, 0x3a, 0x86, 0x3b, 0x70, 0x38, 0x9a, 0x57, 0xc6,
+	0x1e, 0x75, 0xf6, 0x44, 0xbc, 0x93, 0x17, 0xe0, 0x04, 0xc3, 0xaa, 0xd6, 0xc0, 0xe2, 0xed, 0x91,
+	0x07, 0x34, 0xc0, 0x02, 0x88, 0x53, 0x53, 0x4e, 0x3d, 0xd9, 0x8e, 0x53, 0xb3, 0xfa, 0x2e, 0x29,
+	0xe9, 0x50, 0xe4, 0xfc, 0x39, 0x1d, 0xca, 0x36, 0x1e, 0xd8, 0x4e, 0x68, 0x49, 0x44, 0xd0, 0x92,
+	0x8c, 0xa6, 0x25, 0x15, 0x41, 0x4b, 0x3a, 0x8a, 0x96, 0x4c, 0x04, 0x2d, 0xd9, 0x68, 0x5a, 0xf4,
+	0x19, 0xb4, 0x80, 0x07, 0xd0, 0x92, 0x9b, 0x41, 0x4b, 0xfe, 0x5e, 0x5a, 0xe6, 0xa2, 0x68, 0x29,
+	0x44, 0xd2, 0x32, 0x1f, 0x49, 0xcb, 0x42, 0x24, 0x2d, 0x48, 0xd2, 0x12, 0x42, 0x60, 0x7c, 0x77,
+	0x74, 0x25, 0x1c, 0xcf, 0x49, 0x9f, 0xfc, 0x45, 0x38, 0xa6, 0x76, 0x0f, 0xf5, 0x08, 0xba, 0x37,
+	0x3f, 0x25, 0x40, 0x62, 0x9f, 0x59, 0xd0, 0x04, 0xf9, 0x5b, 0xb7, 0xf3, 0xe3, 0xe9, 0xb7, 0xea,
+	0x9d, 0x0b, 0xb0, 0xbc, 0xf1, 0xa0, 0xb2, 0xf1, 0xc9, 0xc0, 0x20, 0x17, 0xbe, 0x23, 0xd7, 0xee,
+	0xfd, 0x3a, 0x54, 0x55, 0x7e, 0xf2, 0x90, 0xaa, 0x70, 0x8b, 0xf0, 0x41, 0x5b, 0x9b, 0xb1, 0xc0,
+	0x59, 0x2d, 0xa6, 0x4c, 0x4c, 0xb4, 0x08, 0x8f, 0xeb, 0xfe, 0x16, 0xa1, 0xaa, 0x88, 0x16, 0x53,
+	0xc6, 0x52, 0x4e, 0xbd, 0x15, 0x4f, 0xd6, 0xee, 0xd6, 0xc5, 0x55, 0x45, 0xbb, 0xbc, 0xaa, 0x68,
+	0x3f, 0xaf, 0x2a, 0xda, 0xc7, 0xeb, 0x4a, 0xec, 0xf2, 0xba, 0x12, 0xfb, 0x7e, 0x5d, 0x89, 0xbd,
+	0x29, 0x4d, 0x7b, 0xb1, 0xc4, 0xb1, 0x65, 0xdd, 0xb4, 0x7c, 0x73, 0xb7, 0x7e, 0x07, 0x00, 0x00,
+	0xff, 0xff, 0xcb, 0x96, 0xa4, 0xef, 0x2a, 0x08, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -833,8 +701,6 @@ type MsgClient interface {
 	UpdateParams(ctx context.Context, in *MsgUpdateParams, opts ...grpc.CallOption) (*MsgUpdateParamsResponse, error)
 	// CreateEntry defines the CreateEntry RPC.
 	CreateEntry(ctx context.Context, in *MsgCreateEntry, opts ...grpc.CallOption) (*MsgCreateEntryResponse, error)
-	// ApproveEntry records an accountability-backed approval for publication.
-	ApproveEntry(ctx context.Context, in *MsgApproveEntry, opts ...grpc.CallOption) (*MsgApproveEntryResponse, error)
 	// UpdateEntry defines the UpdateEntry RPC.
 	UpdateEntry(ctx context.Context, in *MsgUpdateEntry, opts ...grpc.CallOption) (*MsgUpdateEntryResponse, error)
 	// DeleteEntry defines the DeleteEntry RPC.
@@ -867,15 +733,6 @@ func (c *msgClient) CreateEntry(ctx context.Context, in *MsgCreateEntry, opts ..
 	return out, nil
 }
 
-func (c *msgClient) ApproveEntry(ctx context.Context, in *MsgApproveEntry, opts ...grpc.CallOption) (*MsgApproveEntryResponse, error) {
-	out := new(MsgApproveEntryResponse)
-	err := c.cc.Invoke(ctx, "/govchain.datasets.v1.Msg/ApproveEntry", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *msgClient) UpdateEntry(ctx context.Context, in *MsgUpdateEntry, opts ...grpc.CallOption) (*MsgUpdateEntryResponse, error) {
 	out := new(MsgUpdateEntryResponse)
 	err := c.cc.Invoke(ctx, "/govchain.datasets.v1.Msg/UpdateEntry", in, out, opts...)
@@ -901,8 +758,6 @@ type MsgServer interface {
 	UpdateParams(context.Context, *MsgUpdateParams) (*MsgUpdateParamsResponse, error)
 	// CreateEntry defines the CreateEntry RPC.
 	CreateEntry(context.Context, *MsgCreateEntry) (*MsgCreateEntryResponse, error)
-	// ApproveEntry records an accountability-backed approval for publication.
-	ApproveEntry(context.Context, *MsgApproveEntry) (*MsgApproveEntryResponse, error)
 	// UpdateEntry defines the UpdateEntry RPC.
 	UpdateEntry(context.Context, *MsgUpdateEntry) (*MsgUpdateEntryResponse, error)
 	// DeleteEntry defines the DeleteEntry RPC.
@@ -918,9 +773,6 @@ func (*UnimplementedMsgServer) UpdateParams(ctx context.Context, req *MsgUpdateP
 }
 func (*UnimplementedMsgServer) CreateEntry(ctx context.Context, req *MsgCreateEntry) (*MsgCreateEntryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateEntry not implemented")
-}
-func (*UnimplementedMsgServer) ApproveEntry(ctx context.Context, req *MsgApproveEntry) (*MsgApproveEntryResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ApproveEntry not implemented")
 }
 func (*UnimplementedMsgServer) UpdateEntry(ctx context.Context, req *MsgUpdateEntry) (*MsgUpdateEntryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateEntry not implemented")
@@ -965,24 +817,6 @@ func _Msg_CreateEntry_Handler(srv interface{}, ctx context.Context, dec func(int
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MsgServer).CreateEntry(ctx, req.(*MsgCreateEntry))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Msg_ApproveEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgApproveEntry)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MsgServer).ApproveEntry(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/govchain.datasets.v1.Msg/ApproveEntry",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).ApproveEntry(ctx, req.(*MsgApproveEntry))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1035,10 +869,6 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateEntry",
 			Handler:    _Msg_CreateEntry_Handler,
-		},
-		{
-			MethodName: "ApproveEntry",
-			Handler:    _Msg_ApproveEntry_Handler,
 		},
 		{
 			MethodName: "UpdateEntry",
@@ -1136,22 +966,6 @@ func (m *MsgCreateEntry) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.LiabilityContract) > 0 {
-		i -= len(m.LiabilityContract)
-		copy(dAtA[i:], m.LiabilityContract)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.LiabilityContract)))
-		i--
-		dAtA[i] = 0x1
-		i--
-		dAtA[i] = 0x8a
-	}
-	if m.RequiredApprovals != 0 {
-		i = encodeVarintTx(dAtA, i, uint64(m.RequiredApprovals))
-		i--
-		dAtA[i] = 0x1
-		i--
-		dAtA[i] = 0x80
-	}
 	if len(m.PinCount) > 0 {
 		i -= len(m.PinCount)
 		copy(dAtA[i:], m.PinCount)
@@ -1446,78 +1260,6 @@ func (m *MsgUpdateEntryResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) 
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgApproveEntry) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *MsgApproveEntry) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *MsgApproveEntry) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.LiabilitySignature) > 0 {
-		i -= len(m.LiabilitySignature)
-		copy(dAtA[i:], m.LiabilitySignature)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.LiabilitySignature)))
-		i--
-		dAtA[i] = 0x22
-	}
-	if len(m.EvidenceUri) > 0 {
-		i -= len(m.EvidenceUri)
-		copy(dAtA[i:], m.EvidenceUri)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.EvidenceUri)))
-		i--
-		dAtA[i] = 0x1a
-	}
-	if m.Id != 0 {
-		i = encodeVarintTx(dAtA, i, uint64(m.Id))
-		i--
-		dAtA[i] = 0x10
-	}
-	if len(m.Approver) > 0 {
-		i -= len(m.Approver)
-		copy(dAtA[i:], m.Approver)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.Approver)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *MsgApproveEntryResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *MsgApproveEntryResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *MsgApproveEntryResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	return len(dAtA) - i, nil
-}
-
 func (m *MsgDeleteEntry) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -1677,13 +1419,6 @@ func (m *MsgCreateEntry) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
-	if m.RequiredApprovals != 0 {
-		n += 2 + sovTx(uint64(m.RequiredApprovals))
-	}
-	l = len(m.LiabilityContract)
-	if l > 0 {
-		n += 2 + l + sovTx(uint64(l))
-	}
 	return n
 }
 
@@ -1772,39 +1507,6 @@ func (m *MsgUpdateEntry) Size() (n int) {
 }
 
 func (m *MsgUpdateEntryResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	return n
-}
-
-func (m *MsgApproveEntry) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.Approver)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	if m.Id != 0 {
-		n += 1 + sovTx(uint64(m.Id))
-	}
-	l = len(m.EvidenceUri)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	l = len(m.LiabilitySignature)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	return n
-}
-
-func (m *MsgApproveEntryResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -2518,57 +2220,6 @@ func (m *MsgCreateEntry) Unmarshal(dAtA []byte) error {
 			}
 			m.PinCount = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 16:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field RequiredApprovals", wireType)
-			}
-			m.RequiredApprovals = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.RequiredApprovals |= uint32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 17:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field LiabilityContract", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.LiabilityContract = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTx(dAtA[iNdEx:])
@@ -3235,221 +2886,6 @@ func (m *MsgUpdateEntryResponse) Unmarshal(dAtA []byte) error {
 		}
 		if fieldNum <= 0 {
 			return fmt.Errorf("proto: MsgUpdateEntryResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTx(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *MsgApproveEntry) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTx
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgApproveEntry: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgApproveEntry: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Approver", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Approver = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
-			}
-			m.Id = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Id |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field EvidenceUri", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.EvidenceUri = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field LiabilitySignature", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.LiabilitySignature = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTx(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *MsgApproveEntryResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTx
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgApproveEntryResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgApproveEntryResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:

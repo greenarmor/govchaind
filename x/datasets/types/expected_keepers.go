@@ -1,12 +1,10 @@
 package types
 
 import (
-        "context"
+	"context"
 
-        "cosmossdk.io/core/address"
-        sdk "github.com/cosmos/cosmos-sdk/types"
-
-        accountabilitytypes "govchain/x/accountabilityscores/types"
+	"cosmossdk.io/core/address"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // AuthKeeper defines the expected interface for the Auth module.
@@ -24,11 +22,6 @@ type BankKeeper interface {
 
 // ParamSubspace defines the expected Subspace interface for parameters.
 type ParamSubspace interface {
-        Get(context.Context, []byte, interface{})
-        Set(context.Context, []byte, interface{})
-}
-
-// AccountabilityKeeper defines the expected accountability scores keeper interface.
-type AccountabilityKeeper interface {
-        GetScorecardBySubjectMetric(context.Context, string, string) (accountabilitytypes.Scorecard, error)
+	Get(context.Context, []byte, interface{})
+	Set(context.Context, []byte, interface{})
 }

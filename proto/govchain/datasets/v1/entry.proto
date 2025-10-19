@@ -22,22 +22,4 @@ message Entry {
   string pin_count = 15;
   string creator = 16;
   string tx_hash = 17;
-  EntryStatus status = 18;
-  uint32 required_approvals = 19;
-  repeated Approval approvals = 20;
-  string liability_contract = 21;
-}
-
-enum EntryStatus {
-  ENTRY_STATUS_UNSPECIFIED = 0;
-  ENTRY_STATUS_PENDING = 1;
-  ENTRY_STATUS_APPROVED = 2;
-}
-
-message Approval {
-  string approver = 1;
-  uint32 accountability_score = 2;
-  string evidence_uri = 3;
-  string liability_signature = 4;
-  string timestamp = 5;
 }
